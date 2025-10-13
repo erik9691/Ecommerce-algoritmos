@@ -28,6 +28,9 @@ productosNombre2 = ["Consola PS5", "Remera Algodon", "Pantalón Jean", "Auricula
 productosCategoria2 = ["Gaming", "Ropa", "Ropa", "Tecnología", "Calzado", "Ropa", "Tecnología"]
 productosPrecio2 = [120000, 5000, 8000, 15000, 25000, 3500, 12000]
 productosStock2 = [10, 50, 30, 25, 20, 40, 15]
+cantidadStock = [15, 25, 50, 10, 8, 12, 30]
+productosStock = [15, 25, 50, 10, 8, 12, 30]
+productosPrecio = [120000.0, 5000.0, 8000.0, 15000.0, 25000.0, 3500.0, 12000.0]
 productosVendidos2 = [5, 25, 15, 12, 8, 30, 6]
 productosRecaudacion2 = [600000, 125000, 120000, 180000, 200000, 105000, 72000]
 
@@ -49,34 +52,35 @@ cuponesCodigo = [6852, 4182, 2186, 5742]
 cuponesDescuento = [15, 25, 30, 40]
 
 # De GestionarInventario.py
-ProductosNombre = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
-ProductosPrecio = [15.00, 45.00, 499.99, 75.50]
-ProductosStock = [50, 30, 10, 40]
+productosNombre3 = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
+productosPrecio3 = [15.00, 45.00, 499.99, 75.50]
+productosStock3 = [50, 30, 10, 40]
 
 # =================== FUNCIONES DE VALIDACIÓN BÁSICA ===================
 
 def esNumero(texto):
-   
-
     numeros = "0123456789"
+    resultado = True
     if len(texto) == 0:
-        return False
-    for caracter in texto:
-        if caracter not in numeros:
-            return False
-    return True
+        resultado = False
+    else:
+        for caracter in texto:
+            if caracter not in numeros:
+                resultado = False
+    print(resultado)
 
 def esNumeroDecimal(texto):
     # Verifica si es número decimal (puede tener un punto)
     puntoEncontrado = False
+    resultado = True
     for caracter in texto:
         if caracter == ".":
             if puntoEncontrado: 
-                return False
+                resultado = False
             puntoEncontrado = True
         elif caracter < "0" or caracter > "9":
-            return False
-    return True
+            resultado = False
+    print(resultado)
 
 def aMinusculas(texto):
     
@@ -136,7 +140,7 @@ def aMinusculas(texto):
             resultado = resultado + "z"
         else:
             resultado = resultado + caracter
-    return resultado
+    print(resultado)
 
 # =================== FUNCIÓN PARA CARGAR DATOS ===================
 
@@ -242,10 +246,10 @@ def mostrarTodosLosProductos():
     
     # Mostrar productos de inventario
     print("\n--- PRODUCTOS DE INVENTARIO ---")
-    if len(ProductosNombre) > 0:
+    if len(productosNombre3) > 0:
         i = 0
-        while i < len(ProductosNombre):
-            print(f"{i+1}. {ProductosNombre[i]} | Precio: ${ProductosPrecio[i]} | Stock: {ProductosStock[i]}")
+        while i < len(productosNombre3):
+            print(f"{i+1}. {productosNombre3[i]} | Precio: ${productosPrecio3[i]} | Stock: {productosStock3[i]}")
             i = i + 1
     else:
         print("No hay productos en inventario")
@@ -315,11 +319,10 @@ def comprar():
     indice_producto = -1
     
     i = 0
-    while i < len(productosId):
+    while i < len(productosId) and not producto_encontrado:
         if productosId[i] == producto_id:
             producto_encontrado = True
             indice_producto = i
-            break
         i = i + 1
     
     if not producto_encontrado:
@@ -360,12 +363,11 @@ def comprar():
         # Buscar cupón
         i = 0
         cupon_encontrado = False
-        while i < len(cuponesCodigo):
+        while i < len(cuponesCodigo) and not cupon_encontrado:
             if str(cuponesCodigo[i]) == codigo_cupon:
                 descuento = cuponesDescuento[i]
                 cupon_encontrado = True
                 print(f"✅ Cupón aplicado: {descuento}% de descuento")
-                break
             i = i + 1
         
         if not cupon_encontrado:
@@ -400,13 +402,12 @@ def comprar():
         comprasProductoId.append(producto_id)
         comprasCantidad.append(cantidad)
         comprasTotal.append(total)
-        comprasMedioPago.append("Efectivo")  # Por simplificar
-        
+        comprasMedioPago.append("Efectivo")  
         print("✅ Compra realizada exitosamente!")
     else:
         print("Compra cancelada")
 
-# =================== FUNCIONES DE ERIK.PY ===================
+
 
 def verEstadisticaProducto():
     print("Datos de productos cargados:")
@@ -426,7 +427,7 @@ def verEstadisticaProducto():
     i = 0
     encontrado = False
     
-    while i < len(productosId):
+    while i < len(productosId) and not encontrado:
         if str(productosId[i]) == busqueda:
             encontrado = True
             print("Producto encontrado:")
@@ -434,7 +435,6 @@ def verEstadisticaProducto():
             print("Nombre: " + str(productosNombre[i]))
             print("Cantidad vendida: " + str(productosVendidos[i]))
             print("Recaudación total: $" + str(productosRecaudacion[i]))
-            break
         i = i + 1
     
     if not encontrado:
@@ -478,7 +478,6 @@ def verEstadisticas():
     print("")
     verEstadisticaProducto()
 
-# =================== FUNCIONES DE MENU.PY ===================
 
 def validarDNI(dni):
     contador = 0
@@ -506,11 +505,10 @@ def buscarCliente():
     posicion = -1
     
     i = 0
-    while i < len(clienteDni2):
+    while i < len(clienteDni2) and not encontrado:
         if clienteDni2[i] == dni_buscar:
             encontrado = True
             posicion = i
-            break
         i = i + 1
     
     if encontrado:
@@ -535,11 +533,12 @@ def buscarCliente():
 
 def mostrarMenuCompleto():
     print("\n===== MENÚ PRINCIPAL =====")
-    print("1. Ver productos")
-    print("2. Buscar cliente por DNI")
-    print("3. Ver estadísticas")
-    print("4. Gestionar inventario")
-    print("5. Salir")
+    print("1. 💲 Comprar productos")
+    print("2. Ver productos")
+    print("3. Buscar cliente por DNI")
+    print("4. Ver estadísticas")
+    print("5. Gestionar inventario")
+    print("6. Salir")
 
 def salir():
     respuesta = input("¿Está seguro que desea salir? (s/n): ")
@@ -549,7 +548,7 @@ def salir():
     else:
         return False
 
-# =================== FUNCIONES DE CUPONES (DE ECOMMERCE.PY) ===================
+
 
 def cargarCupon():
     print("\n=== CARGAR CUPÓN ===")
@@ -598,8 +597,8 @@ def gestionar_inventario():
     
     print("Productos disponibles:")
     i = 0
-    while i < len(ProductosNombre):
-        print(str(i+1) + ". " + ProductosNombre[i] + " - Precio: $" + str(ProductosPrecio[i]) + " - Stock: " + str(ProductosStock[i]))
+    while i < len(productosNombre3):
+        print(str(i+1) + ". " + productosNombre3[i] + " - Precio: $" + str(productosPrecio3[i]) + " - Stock: " + str(productosStock3[i]))
         i = i + 1
     
     seleccion = input("Seleccione el número del producto a modificar (o presione Enter para volver): ")
@@ -613,10 +612,9 @@ def gestionar_inventario():
         valido = False
     else:
         i = 0
-        while i < len(seleccion):
+        while i < len(seleccion) and valido:
             if seleccion[i] < '0' or seleccion[i] > '9':
                 valido = False
-                break
             i = i + 1
     
     if not valido:
@@ -625,64 +623,64 @@ def gestionar_inventario():
     
     indice = int(seleccion) - 1
     
-    if indice < 0 or indice >= len(ProductosNombre):
+    validacionIndice = True
+    if indice < 0 or indice >= len(productosNombre3):
         print("Número de producto inválido.")
-        return
+        validacionIndice = False
     
-    print("Producto seleccionado:", ProductosNombre[indice])
-    print("1. Modificar stock")
-    print("2. Modificar precio")
-    
-    opcion = input("Seleccione una opción: ")
-    
-    if opcion == "1":
-        nuevo_stock = input("Ingrese el nuevo stock: ")
+    if validacionIndice:
+        print("Producto seleccionado:", productosNombre3[indice])
+        print("1. Modificar stock")
+        print("2. Modificar precio")
         
-        # Validar que sea un número
-        valido = True
-        if nuevo_stock == "":
-            valido = False
-        else:
-            i = 0
-            while i < len(nuevo_stock):
-                if nuevo_stock[i] < '0' or nuevo_stock[i] > '9':
-                    valido = False
-                    break
-                i = i + 1
+        opcion = input("Seleccione una opción: ")
         
-        if valido:
-            ProductosStock[indice] = int(nuevo_stock)
-            print("Stock actualizado correctamente.")
-        else:
-            print("Stock inválido.")
-    
-    elif opcion == "2":
-        nuevo_precio = input("Ingrese el nuevo precio: ")
-        
-        # Validar que sea un número decimal
-        valido = True
-        puntos = 0
-        
-        if nuevo_precio == "":
-            valido = False
-        else:
-            i = 0
-            while i < len(nuevo_precio):
-                if nuevo_precio[i] == '.':
-                    puntos = puntos + 1
-                elif nuevo_precio[i] < '0' or nuevo_precio[i] > '9':
-                    valido = False
-                    break
-                i = i + 1
+        if opcion == "1":
+            nuevo_stock = input("Ingrese el nuevo stock: ")
             
-            if puntos > 1:
+            # Validar que sea un número
+            valido = True
+            if nuevo_stock == "":
                 valido = False
+            else:
+                i = 0
+                while i < len(nuevo_stock) and valido:
+                    if nuevo_stock[i] < '0' or nuevo_stock[i] > '9':
+                        valido = False
+                    i = i + 1
+            
+            if valido:
+                productosStock3[indice] = int(nuevo_stock)
+                print("Stock actualizado correctamente.")
+            else:
+                print("Stock inválido.")
         
-        if valido:
-            ProductosPrecio[indice] = float(nuevo_precio)
-            print("Precio actualizado correctamente.")
-        else:
-            print("Precio inválido.")
+        elif opcion == "2":
+            nuevo_precio = input("Ingrese el nuevo precio: ")
+            
+            # Validar que sea un número decimal
+            valido = True
+            puntos = 0
+            
+            if nuevo_precio == "":
+                valido = False
+            else:
+                i = 0
+                while i < len(nuevo_precio) and valido:
+                    if nuevo_precio[i] == '.':
+                        puntos = puntos + 1
+                    elif nuevo_precio[i] < '0' or nuevo_precio[i] > '9':
+                        valido = False
+                    i = i + 1
+                
+                if puntos > 1:
+                    valido = False
+            
+            if valido:
+                productosPrecio3[indice] = float(nuevo_precio)
+                print("Precio actualizado correctamente.")
+            else:
+                print("Precio inválido.")
     
     else:
         print("Opción inválida.")
@@ -743,14 +741,16 @@ def main():
                 opcion2 = input("Seleccione una opción: ")
                 
                 if opcion2 == "1":
-                    mostrarTodosLosProductos()
+                    comprar()
                 elif opcion2 == "2":
-                    buscarCliente()
+                    mostrarTodosLosProductos()
                 elif opcion2 == "3":
-                    verEstadisticas()
+                    buscarCliente()
                 elif opcion2 == "4":
-                    gestionar_inventario()
+                    verEstadisticas()
                 elif opcion2 == "5":
+                    gestionar_inventario()
+                elif opcion2 == "6":
                     if salir():
                         continuar = False
                         continuar2 = False
@@ -764,6 +764,7 @@ def main():
         
         if continuar:
             input("\nPresione Enter para continuar...")
+
 
 # =================== PROGRAMA PRINCIPAL ===================
 
