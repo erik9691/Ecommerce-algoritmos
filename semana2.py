@@ -442,7 +442,7 @@ def mostrarCupones():
         print("-" * 40)
         print(f"Total de cupones: {len(cuponesCodigo)}")
 
-# =================== FUNCIONES DE GESTIONARINVENTARIO.PY ===================
+
 
 def gestionar_inventario():
     print("===== GESTIÓN DE INVENTARIO =====")
