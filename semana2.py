@@ -217,6 +217,39 @@ def mostrarProductos():
         print("-" * 80)
         print(f"Total de productos: {len(productosId)}")
 
+def mostrarTodosLosProductos():
+    print("\n=== TODOS LOS PRODUCTOS DEL SISTEMA ===")
+    
+    # Mostrar productos principales
+    print("\n--- PRODUCTOS PRINCIPALES ---")
+    if len(productosNombre) > 0:
+        i = 0
+        while i < len(productosNombre):
+            print(f"ID: {productosId[i]} | {productosNombre[i]} | Stock: {productosStock[i]} | Precio: ${productosPrecio[i]}")
+            i = i + 1
+    else:
+        print("No hay productos principales")
+    
+    # Mostrar productos del menú (productosId2)
+    print("\n--- PRODUCTOS DEL CATÁLOGO COMPLETO ---")
+    if len(productosNombre2) > 0:
+        i = 0
+        while i < len(productosNombre2):
+            print(f"ID: {productosId2[i]} | {productosNombre2[i]} | {productosCategoria2[i]} | Stock: {productosStock2[i]} | Precio: ${productosPrecio2[i]}")
+            i = i + 1
+    else:
+        print("No hay productos en el catálogo")
+    
+    # Mostrar productos de inventario
+    print("\n--- PRODUCTOS DE INVENTARIO ---")
+    if len(ProductosNombre) > 0:
+        i = 0
+        while i < len(ProductosNombre):
+            print(f"{i+1}. {ProductosNombre[i]} | Precio: ${ProductosPrecio[i]} | Stock: {ProductosStock[i]}")
+            i = i + 1
+    else:
+        print("No hay productos en inventario")
+
 # =================== FUNCIÓN PARA CARGAR DATOS DE PRUEBA ===================
 
 def cargarDatosPrueba():
@@ -552,8 +585,9 @@ def menuPrincipal():
     print("[6] Gestionar inventario")
     print("[7] Cargar cupón")
     print("[8] Mostrar cupones")
-    print("[9] Menú completo")
-    print("[10] Salir")
+    print("[9] Mostrar TODOS los productos")
+    print("[10] Menú completo")
+    print("[11] Salir")
     print("="*50)
 
 def main():
@@ -582,13 +616,15 @@ def main():
         elif opcion == "8":
             mostrarCupones()
         elif opcion == "9":
+            mostrarTodosLosProductos()
+        elif opcion == "10":
             continuar2 = True
             while continuar2:
                 mostrarMenuCompleto()
                 opcion2 = input("Seleccione una opción: ")
                 
                 if opcion2 == "1":
-                    mostrarProductos()
+                    mostrarTodosLosProductos()
                 elif opcion2 == "2":
                     buscarCliente()
                 elif opcion2 == "3":
@@ -601,7 +637,7 @@ def main():
                         continuar2 = False
                 else:
                     print("Opción inválida")
-        elif opcion == "10":
+        elif opcion == "11":
             print("¡Gracias por usar el sistema!")
             continuar = False
         else:
