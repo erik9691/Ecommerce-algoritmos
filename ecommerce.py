@@ -465,7 +465,7 @@ def verEstadisticas():
     if len(clienteRecaudacion) == 0:
         print("No hay ventas registradas")
     else:
-        # Facturación total - calcular suma sin usar sum()
+      
         totalFacturado = 0
         i = 0
         while i < len(clienteRecaudacion):
@@ -494,7 +494,7 @@ def verEstadisticas():
         
         # Cliente con mayor compra
         if len(clienteRecaudacion) > 0:
-            # Buscar el máximo y su índice sin usar max() ni .index()
+           
             maxCompra = clienteRecaudacion[0]
             indiceMax = 0
             i = 1
@@ -513,7 +513,7 @@ def verEstadisticas():
             efectivoCount = 0
             tarjetaCount = 0
 
-            # Contar medios de pago sin bucle anidado
+          
             j = 0
             while j < len(comprasDni):
                 if comprasDni[j] == clienteDni[i]:
