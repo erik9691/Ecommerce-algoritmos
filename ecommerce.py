@@ -414,7 +414,14 @@ def comprar():
                                 if aMinusculas(usarCupon) == "s":
                                     codigo = input("Código del cupón: ")
                                     if codigo in cuponesCodigo:
-                                        indiceCupon = cuponesCodigo.index(codigo)
+                                        
+                                        indiceCupon = -1
+                                        i = 0
+                                        while i < len(cuponesCodigo):
+                                            if cuponesCodigo[i] == codigo:
+                                                indiceCupon = i
+                                            i = i + 1
+                                        
                                         descuento = cuponesDescuento[indiceCupon]
                                         print(f"Cupón aplicado: {descuento}% descuento")
                                     else:
@@ -458,8 +465,13 @@ def verEstadisticas():
     if len(clienteRecaudacion) == 0:
         print("No hay ventas registradas")
     else:
-        # Facturación total
-        totalFacturado = sum(clienteRecaudacion)
+        # Facturación total - calcular suma sin usar sum()
+        totalFacturado = 0
+        i = 0
+        while i < len(clienteRecaudacion):
+            totalFacturado = totalFacturado + clienteRecaudacion[i]
+            i = i + 1
+        
         clientesTotal = len(clienteDni)
         print(f"1. Facturación total: ${totalFacturado}")
         print(f"   Clientes distintos: {clientesTotal}")
@@ -482,8 +494,15 @@ def verEstadisticas():
         
         # Cliente con mayor compra
         if len(clienteRecaudacion) > 0:
-            maxCompra = max(clienteRecaudacion)
-            indiceMax = clienteRecaudacion.index(maxCompra)
+            # Buscar el máximo y su índice sin usar max() ni .index()
+            maxCompra = clienteRecaudacion[0]
+            indiceMax = 0
+            i = 1
+            while i < len(clienteRecaudacion):
+                if clienteRecaudacion[i] > maxCompra:
+                    maxCompra = clienteRecaudacion[i]
+                    indiceMax = i
+                i = i + 1
             print(f"\n3. Cliente con mayor facturación:")
             print(f"   DNI: {clienteDni[indiceMax]} - ${maxCompra}")
 
