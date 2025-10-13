@@ -4,9 +4,9 @@
 
 productosId = ["id0", "id1", "id2", "id3"]
 productosNombre = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
-productosCategoria = []
-productosPrecio = []
-productosStock = []
+productosCategoria = ["Vestimenta", "Vestimenta", "Tecnología", "Tecnología"]
+productosPrecio = [15.40, 27.95, 683.00, 128.50]
+productosStock = [46, 28, 9, 39]
 productosVendidos = [4, 2, 1, 1]
 productosRecaudacion = [616, 559, 683, 514]
 
@@ -289,6 +289,122 @@ def cargarDatosPrueba():
             print(f"❌ {nombre} ya existe, no se carga")
     
     print("Carga de datos de prueba completada")
+
+# =================== FUNCIÓN DE COMPRAS ===================
+
+def comprar():
+    print("\n=== COMPRAR PRODUCTOS ===")
+    
+    # Mostrar productos disponibles
+    print("Productos disponibles:")
+    print("-" * 60)
+    print("ID\t\tPRODUCTO\t\tPRECIO\t\tSTOCK")
+    print("-" * 60)
+    
+    i = 0
+    while i < len(productosId):
+        if productosStock[i] > 0:
+            print(f"{productosId[i]}\t\t{productosNombre[i]}\t\t${productosPrecio[i]}\t\t{productosStock[i]}")
+        i = i + 1
+    
+    # Seleccionar producto
+    producto_id = input("\nIngrese el ID del producto: ")
+    
+    # Buscar producto
+    producto_encontrado = False
+    indice_producto = -1
+    
+    i = 0
+    while i < len(productosId):
+        if productosId[i] == producto_id:
+            producto_encontrado = True
+            indice_producto = i
+            break
+        i = i + 1
+    
+    if not producto_encontrado:
+        print("❌ Producto no encontrado")
+        return
+    
+    if productosStock[indice_producto] <= 0:
+        print("❌ Producto sin stock")
+        return
+    
+    # Solicitar cantidad
+    cantidad_input = input(f"Cantidad de {productosNombre[indice_producto]} (Stock disponible: {productosStock[indice_producto]}): ")
+    
+    if esNumero(cantidad_input):
+        cantidad = int(cantidad_input)
+        if cantidad <= 0 or cantidad > productosStock[indice_producto]:
+            print("❌ Cantidad inválida")
+            return
+    else:
+        print("❌ Debe ingresar un número válido")
+        return
+    
+    # Solicitar DNI
+    dni = input("Ingrese su DNI (8 dígitos): ")
+    if not validarDNI(dni):
+        print("❌ DNI inválido")
+        return
+    
+    # Calcular total
+    subtotal = productosPrecio[indice_producto] * cantidad
+    descuento = 0
+    
+    # Aplicar cupón
+    usar_cupon = input("¿Desea usar un cupón? (s/n): ")
+    if aMinusculas(usar_cupon) == "s":
+        codigo_cupon = input("Ingrese el código del cupón: ")
+        
+        # Buscar cupón
+        i = 0
+        cupon_encontrado = False
+        while i < len(cuponesCodigo):
+            if str(cuponesCodigo[i]) == codigo_cupon:
+                descuento = cuponesDescuento[i]
+                cupon_encontrado = True
+                print(f"✅ Cupón aplicado: {descuento}% de descuento")
+                break
+            i = i + 1
+        
+        if not cupon_encontrado:
+            print("❌ Cupón inválido")
+    
+    # Calcular total final
+    monto_descuento = subtotal * (descuento / 100)
+    total = subtotal - monto_descuento
+    
+    # Mostrar resumen
+    print(f"\n=== RESUMEN DE COMPRA ===")
+    print(f"Producto: {productosNombre[indice_producto]}")
+    print(f"Cantidad: {cantidad}")
+    print(f"Precio unitario: ${productosPrecio[indice_producto]}")
+    print(f"Subtotal: ${subtotal}")
+    if descuento > 0:
+        print(f"Descuento ({descuento}%): -${monto_descuento}")
+    print(f"Total: ${total}")
+    
+    # Confirmar compra
+    confirmar = input("\n¿Confirmar compra? (s/n): ")
+    if aMinusculas(confirmar) == "s":
+        # Actualizar stock
+        productosStock[indice_producto] = productosStock[indice_producto] - cantidad
+        productosVendidos[indice_producto] = productosVendidos[indice_producto] + cantidad
+        productosRecaudacion[indice_producto] = productosRecaudacion[indice_producto] + total
+        
+        # Registrar compra
+        nuevo_id_compra = len(comprasId)
+        comprasId.append(nuevo_id_compra)
+        comprasDni.append(int(dni))
+        comprasProductoId.append(producto_id)
+        comprasCantidad.append(cantidad)
+        comprasTotal.append(total)
+        comprasMedioPago.append("Efectivo")  # Por simplificar
+        
+        print("✅ Compra realizada exitosamente!")
+    else:
+        print("Compra cancelada")
 
 # =================== FUNCIONES DE ERIK.PY ===================
 
@@ -575,23 +691,24 @@ def gestionar_inventario():
 
 def menuPrincipal():
     print("\n" + "="*50)
-    print("SISTEMA DE GESTIÓN - SEMANA 2")
+    print("E-COMMERCE - SEMANA 2")
     print("="*50)
-    print("[1] Cargar producto")
-    print("[2] Mostrar productos")  
-    print("[3] Cargar datos de prueba")
-    print("[4] Ver estadísticas")
-    print("[5] Buscar cliente por DNI")
-    print("[6] Gestionar inventario")
-    print("[7] Cargar cupón")
-    print("[8] Mostrar cupones")
-    print("[9] Mostrar TODOS los productos")
-    print("[10] Menú completo")
-    print("[11] Salir")
+    print("[1] 💲 Comprar productos")
+    print("[2] Cargar producto")
+    print("[3] Mostrar productos")  
+    print("[4] Cargar datos de prueba")
+    print("[5] Ver estadísticas")
+    print("[6] Buscar cliente por DNI")
+    print("[7] Gestionar inventario")
+    print("[8] Cargar cupón")
+    print("[9] Mostrar cupones")
+    print("[10] Mostrar TODOS los productos")
+    print("[11] Menú completo")
+    print("[12] Salir")
     print("="*50)
 
 def main():
-    print("Iniciando Sistema de Gestión de Productos...")
+    print("Iniciando Sistema E-Commerce...")
     print("Semana 2: Carga de Datos y Validaciones")
     
     continuar = True
@@ -600,24 +717,26 @@ def main():
         opcion = input("Seleccione una opción: ")
         
         if opcion == "1":
-            cargarProducto()
+            comprar()
         elif opcion == "2":
-            mostrarProductos()
+            cargarProducto()
         elif opcion == "3":
-            cargarDatosPrueba()
+            mostrarProductos()
         elif opcion == "4":
-            verEstadisticas()
+            cargarDatosPrueba()
         elif opcion == "5":
-            buscarCliente()
+            verEstadisticas()
         elif opcion == "6":
-            gestionar_inventario()
+            buscarCliente()
         elif opcion == "7":
-            cargarCupon()
+            gestionar_inventario()
         elif opcion == "8":
-            mostrarCupones()
+            cargarCupon()
         elif opcion == "9":
-            mostrarTodosLosProductos()
+            mostrarCupones()
         elif opcion == "10":
+            mostrarTodosLosProductos()
+        elif opcion == "11":
             continuar2 = True
             while continuar2:
                 mostrarMenuCompleto()
@@ -637,7 +756,7 @@ def main():
                         continuar2 = False
                 else:
                     print("Opción inválida")
-        elif opcion == "11":
+        elif opcion == "12":
             print("¡Gracias por usar el sistema!")
             continuar = False
         else:
