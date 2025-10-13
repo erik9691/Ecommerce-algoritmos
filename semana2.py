@@ -67,7 +67,7 @@ def esNumero(texto):
         for caracter in texto:
             if caracter not in numeros:
                 resultado = False
-    print(resultado)
+    return resultado
 
 def esNumeroDecimal(texto):
     # Verifica si es número decimal (puede tener un punto)
@@ -80,7 +80,7 @@ def esNumeroDecimal(texto):
             puntoEncontrado = True
         elif caracter < "0" or caracter > "9":
             resultado = False
-    print(resultado)
+    return resultado
 
 def aMinusculas(texto):
     
@@ -140,7 +140,7 @@ def aMinusculas(texto):
             resultado = resultado + "z"
         else:
             resultado = resultado + caracter
-    print(resultado)
+    return resultado
 
 # =================== FUNCIÓN PARA CARGAR DATOS ===================
 
