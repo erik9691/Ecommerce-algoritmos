@@ -11,41 +11,127 @@ def esNumero(texto):
     return True
 
 def aMinusculas(texto):
-
-    mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    minusculas = "abcdefghijklmnopqrstuvwxyz"
+ 
     resultado = ""
     
     for caracter in texto:
-        encontrado = False
-        i = 0
-        while i < len(mayusculas) and not encontrado:
-            if caracter == mayusculas[i]:
-                resultado = resultado + minusculas[i]
-                encontrado = True
-            i = i + 1
-        
-        if not encontrado:
+        if caracter == "A":
+            resultado = resultado + "a"
+        elif caracter == "B":
+            resultado = resultado + "b"
+        elif caracter == "C":
+            resultado = resultado + "c"
+        elif caracter == "D":
+            resultado = resultado + "d"
+        elif caracter == "E":
+            resultado = resultado + "e"
+        elif caracter == "F":
+            resultado = resultado + "f"
+        elif caracter == "G":
+            resultado = resultado + "g"
+        elif caracter == "H":
+            resultado = resultado + "h"
+        elif caracter == "I":
+            resultado = resultado + "i"
+        elif caracter == "J":
+            resultado = resultado + "j"
+        elif caracter == "K":
+            resultado = resultado + "k"
+        elif caracter == "L":
+            resultado = resultado + "l"
+        elif caracter == "M":
+            resultado = resultado + "m"
+        elif caracter == "N":
+            resultado = resultado + "n"
+        elif caracter == "O":
+            resultado = resultado + "o"
+        elif caracter == "P":
+            resultado = resultado + "p"
+        elif caracter == "Q":
+            resultado = resultado + "q"
+        elif caracter == "R":
+            resultado = resultado + "r"
+        elif caracter == "S":
+            resultado = resultado + "s"
+        elif caracter == "T":
+            resultado = resultado + "t"
+        elif caracter == "U":
+            resultado = resultado + "u"
+        elif caracter == "V":
+            resultado = resultado + "v"
+        elif caracter == "W":
+            resultado = resultado + "w"
+        elif caracter == "X":
+            resultado = resultado + "x"
+        elif caracter == "Y":
+            resultado = resultado + "y"
+        elif caracter == "Z":
+            resultado = resultado + "z"
+        else:
             resultado = resultado + caracter
     
     return resultado
 
+
+
 def aMayusculas(texto):
-    # Reemplaza .upper() - convierte texto a mayúsculas
-    mayusculas = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    minusculas = "abcdefghijklmnopqrstuvwxyz"
+   
     resultado = ""
     
     for caracter in texto:
-        encontrado = False
-        i = 0
-        while i < len(minusculas) and not encontrado:
-            if caracter == minusculas[i]:
-                resultado = resultado + mayusculas[i]
-                encontrado = True
-            i = i + 1
-        
-        if not encontrado:
+        if caracter == "a":
+            resultado = resultado + "A"
+        elif caracter == "b":
+            resultado = resultado + "B"
+        elif caracter == "c":
+            resultado = resultado + "C"
+        elif caracter == "d":
+            resultado = resultado + "D"
+        elif caracter == "e":
+            resultado = resultado + "E"
+        elif caracter == "f":
+            resultado = resultado + "F"
+        elif caracter == "g":
+            resultado = resultado + "G"
+        elif caracter == "h":
+            resultado = resultado + "H"
+        elif caracter == "i":
+            resultado = resultado + "I"
+        elif caracter == "j":
+            resultado = resultado + "J"
+        elif caracter == "k":
+            resultado = resultado + "K"
+        elif caracter == "l":
+            resultado = resultado + "L"
+        elif caracter == "m":
+            resultado = resultado + "M"
+        elif caracter == "n":
+            resultado = resultado + "N"
+        elif caracter == "o":
+            resultado = resultado + "O"
+        elif caracter == "p":
+            resultado = resultado + "P"
+        elif caracter == "q":
+            resultado = resultado + "Q"
+        elif caracter == "r":
+            resultado = resultado + "R"
+        elif caracter == "s":
+            resultado = resultado + "S"
+        elif caracter == "t":
+            resultado = resultado + "T"
+        elif caracter == "u":
+            resultado = resultado + "U"
+        elif caracter == "v":
+            resultado = resultado + "V"
+        elif caracter == "w":
+            resultado = resultado + "W"
+        elif caracter == "x":
+            resultado = resultado + "X"
+        elif caracter == "y":
+            resultado = resultado + "Y"
+        elif caracter == "z":
+            resultado = resultado + "Z"
+        else:
             resultado = resultado + caracter
     
     return resultado
@@ -59,7 +145,7 @@ def quitarPuntos(texto):
     return resultado
 
 def esNumeroDecimal(texto):
-    # Verifica si es número decimal (puede tener un punto)
+    
     textoSinPuntos = quitarPuntos(texto)
     return esNumero(textoSinPuntos)
 
@@ -381,17 +467,17 @@ def verEstadisticas():
         # Por producto
         print("\n2. Facturación por producto:")
         for i in range(len(productosId)):
-            clientesProducto = 0
-            for j in range(len(comprasProductoId)):
+            # Crear lista de clientes únicos para este producto
+            clientesUnicos = []
+            j = 0
+            while j < len(comprasProductoId):
                 if comprasProductoId[j] == productosId[i]:
                     dniCompra = comprasDni[j]
-                    yaContado = False
-                    for k in range(j):
-                        if comprasDni[k] == dniCompra and comprasProductoId[k] == productosId[i]:
-                            yaContado = True
-                    if not yaContado:
-                        clientesProducto = clientesProducto + 1
-
+                    if dniCompra not in clientesUnicos:
+                        clientesUnicos.append(dniCompra)
+                j = j + 1
+            
+            clientesProducto = len(clientesUnicos)
             print(f"   {productosNombre[i]}: ${productosRecaudacion[i]} ({clientesProducto} clientes)")
         
         # Cliente con mayor compra
@@ -408,12 +494,15 @@ def verEstadisticas():
             efectivoCount = 0
             tarjetaCount = 0
 
-            for j in range(len(comprasDni)):
+            # Contar medios de pago sin bucle anidado
+            j = 0
+            while j < len(comprasDni):
                 if comprasDni[j] == clienteDni[i]:
                     if comprasMedioPago[j] == "Efectivo":
                         efectivoCount = efectivoCount + 1
                     else:
                         tarjetaCount = tarjetaCount + 1
+                j = j + 1
 
             if efectivoCount >= tarjetaCount:
                 medioPrincipal = "Efectivo"
@@ -480,24 +569,30 @@ def buscarCliente():
             print("\nProductos comprados:")
             productosCliente = {}
             
-            for i in range(len(comprasDni)):
+            # Compras del cliente
+            comprasDelCliente = []
+            i = 0
+            while i < len(comprasDni):
                 if comprasDni[i] == dniNum:
-                    prodId = comprasProductoId[i]
-                    cantidad = comprasCantidad[i]
+                    comprasDelCliente.append([comprasProductoId[i], comprasCantidad[i]])
+                i = i + 1
+            
+            # buscar nombres de productos
+            for compra in comprasDelCliente:
+                prodId = compra[0]
+                cantidad = compra[1]
+                
+                nombreProducto = "Producto no encontrado"
+                j = 0
+                while j < len(productosId):
+                    if productosId[j] == prodId:
+                        nombreProducto = productosNombre[j]
+                    j = j + 1
 
-                    nombreProducto = "Producto no encontrado"
-                    j = 0
-                    encontrado = False
-                    while j < len(productosId) and not encontrado:
-                        if productosId[j] == prodId:
-                            nombreProducto = productosNombre[j]
-                            encontrado = True
-                        j = j + 1
-
-                    if nombreProducto in productosCliente:
-                        productosCliente[nombreProducto] = productosCliente[nombreProducto] + cantidad
-                    else:
-                        productosCliente[nombreProducto] = cantidad
+                if nombreProducto in productosCliente:
+                    productosCliente[nombreProducto] = productosCliente[nombreProducto] + cantidad
+                else:
+                    productosCliente[nombreProducto] = cantidad
 
             for producto in productosCliente:
                 print(f"  {producto}: {productosCliente[producto]} unidades")
