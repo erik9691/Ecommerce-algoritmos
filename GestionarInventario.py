@@ -1,25 +1,25 @@
 
-ProductosNombre = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
-ProductosPrecio = [15.00, 45.00, 499.99, 75.50]
-ProductosStock = [50, 30, 10, 40]
+productosNombre = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
+productosPrecio = [15.00, 45.00, 499.99, 75.50]
+productosStock = [50, 30, 10, 40]
 
-def gestionar_inventario():
+def gestionarStock():
     
     print("\n--- GESTIÓN DE INVENTARIO Y PRECIOS ---")
 
     print("--- PRODUCTOS ACTUALES ---")
-    for i in range(len(ProductosNombre)):
-        print(f"[{i+1}] {ProductosNombre[i]} | Precio: ${ProductosPrecio[i]} | Stock: {ProductosStock[i]}")
+    for i in range(len(productosNombre)):
+        print(f"[{i+1}] {productosNombre[i]} | Precio: ${productosPrecio[i]} | Stock: {productosStock[i]}")
      
     opcion=int(input("Seleccione el producto a modificar:__"))
     
-    if opcion > len(ProductosNombre):
+    if opcion > len(productosNombre):
         print("⛝ OPCION NO VALIDA ⛝")
-        gestionar_inventario()
+        gestionarStock()
     else:
         opcion=opcion-1
         print("-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-")
-        print('\033[1m\033[4m' f"Edición del producto: {ProductosNombre[opcion]} | Stock: {ProductosStock[opcion]} | Precio: {ProductosPrecio[opcion]}" '\033[0m')
+        print('\033[1m\033[4m' f"Edición del producto: {productosNombre[opcion]} | Stock: {productosStock[opcion]} | Precio: {productosPrecio[opcion]}" '\033[0m')
         print("")
         print("⚒---⚒︎---⚒---⚒---⚒---⚒---⚒---⚒---⚒---⚒---⚒---⚒")
         print("[1] Modificar Stock")
@@ -30,41 +30,41 @@ def gestionar_inventario():
        
 
         if ajuste == 1:
-            print(f"-----AJUSTANDO STOCK {ProductosNombre[opcion]} ({ProductosStock[opcion]})-------")
+            print(f"-----AJUSTANDO STOCK {productosNombre[opcion]} ({productosStock[opcion]})-------")
             ajusteStock=int(input("Ingrese + o - para modificar el stock: "))
-            nuevoStock= ProductosStock[opcion] + ajusteStock
+            nuevoStock= productosStock[opcion] + ajusteStock
             if nuevoStock < 0:
                 print("⛝       Cambio no realizado       ⛝ ")
                 print("X---X---X---EL STOCK DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
-                return gestionar_inventario()
+                return gestionarStock()
             
             else:
-                ProductosStock[opcion]=nuevoStock
+                productosStock[opcion]=nuevoStock
                 print("-----------------------------------------------")
-                print(f"Nuevo Stock de {ProductosNombre[opcion]} | Stock actualizado: {ProductosStock[opcion]}")
+                print(f"Nuevo Stock de {productosNombre[opcion]} | Stock actualizado: {productosStock[opcion]}")
                 print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
-                return gestionar_inventario()
+                return gestionarStock()
         
         if ajuste == 2:
-            print(f"-----AJUSTANDO PRECIO {ProductosNombre[opcion]} (${ProductosPrecio[opcion]})-------")
+            print(f"-----AJUSTANDO PRECIO {productosNombre[opcion]} (${productosPrecio[opcion]})-------")
             ajustePrecio=int(input("Ingrese el nuevo precio del producto: $"))
             if ajustePrecio<=0:
                 print("X---X---X---EL PRECIO DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
                 print("⛝       Cambio no realizado       ⛝ ")
-                gestionar_inventario()
+                gestionarStock()
             else:    
-                ProductosPrecio[opcion]=ajustePrecio
+                productosPrecio[opcion]=ajustePrecio
                 print("--------------------------------------------------")
-                print(f"Nuevo Precio de {ProductosNombre[opcion]} | Precio actualizado: ${ProductosPrecio[opcion]}")
+                print(f"Nuevo Precio de {productosNombre[opcion]} | Precio actualizado: ${productosPrecio[opcion]}")
                 print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
-                gestionar_inventario()
+                gestionarStock()
         
         if ajuste == 3:
-            gestionar_inventario()
+            gestionarStock()
             
         else:
             print("⛝ OPCION NO VALIDA ⛝")
-            gestionar_inventario()
+            gestionarStock()
             
-gestionar_inventario()
+gestionarStock()
 

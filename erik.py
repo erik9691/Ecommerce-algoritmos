@@ -14,10 +14,9 @@ comprasCantidad = [4, 2, 1, 1]
 comprasTotal = [616, 559, 683, 514]
 comprasMedioPago = ["Efectivo", "Tarjeta", "Tarjeta", "Efectivo"]
 
-# Listas de clientes
 clienteDni = [123, 456, 789]
-clienteRecaudacion = []
-clienteCompras = []
+clienteRecaudacion = [1130, 559, 683]
+clienteCompras = [2, 1, 1]
 
 def verEstadisticaProducto():
     #Pantalla inicial con productos
@@ -35,29 +34,36 @@ def verEstadisticaProducto():
     print(f"- - - - - Estadísticas para {productosNombre[productoNum]} - - - - -")
     print(f"Facturación total: ${productosRecaudacion[productoNum]}")
     print(f"Cantidad de compras: {productosVendidos[productoNum]}")
-    input("Presione cualquier tecla para volver")
+    input("Presione Enter para continuar...")
     verEstadisticaProducto()
 
-def verEstadisticasCliente():
+def verEstadisticaCliente():
     #Pantalla inicial con clientes
+    print("================================================================")
     print("- - - - - 📈 VENTAS POR CLIENTE 📊 - - - - -")
     print("[0] Volver")
     for i in range(len(clienteDni)):
         print(f"[{i+1}] {clienteDni[i]}")
     clienteNum = int(input("Seleccione un cliente: ")) - 1
-    dniSelect = clienteDni[clienteNum]
+    print("================================================================")
 
     #Si presiona 0 salir de funcion
     if clienteNum == (-1):
         return
+    else:
+        dniSelect = clienteDni[clienteNum]
 
     #Segunda pantalla con estadísticas de todas las compras, filtrado por el cliente seleccionado
-    print(f"Listado completo detallado de facturación de {dniSelect}:")
+    print(f"- - - - - Cliente ({dniSelect}) - - - - -")
+    print(f"Pagos totales: ${clienteRecaudacion[clienteNum]}")
+    print(f"Cantidad de compras: {clienteCompras[clienteNum]}")
+    print("\nProductos comprados:")
     for i in range(len(comprasId)):
         if comprasDni[i] == dniSelect:
             print(f"- Producto: {comprasProductoId[i]} | Cantidad comprado: {comprasCantidad[i]} | Total Facturado: ${comprasTotal[i]} | Tipo de Pago: {comprasMedioPago[i]}")
-    input("Presione cualquier tecla para volver")
-    verEstadisticasCliente()
+    print("================================================================")
+    input("Presione Enter para continuar...")
+    verEstadisticaCliente()
     
 
 def verEstadisticas():
@@ -70,7 +76,7 @@ def verEstadisticas():
     print("[4] Facturación por cliente")
     opcionNum = input("Seleccione una opción: ")
 
-    #Si presiona 0 salir de funcion
+    #Mostrar estadistica de acuerdo a numero seleccionado
     if opcionNum == "0":
         return
     elif opcionNum == "1":
@@ -78,13 +84,13 @@ def verEstadisticas():
         for producto in productosRecaudacion:
             dineroTotal += producto
         print(f"Facturación total: ${dineroTotal}")
-        input("Presione cualquier tecla para volver")
+        input("Presione Enter para continuar...")
         verEstadisticas()
     elif opcionNum == "2":
         print("Facturación total por producto (Ordenado por Facturación):")
         for i in range(len(productosId)):
             print(f"- {productosNombre[i]} ({productosId[i]}): ${productosRecaudacion[i]}")
-        input("Presione cualquier tecla para volver")
+        input("Presione Enter para continuar...")
         verEstadisticas()
     elif opcionNum == "3":
         dniCompraMax = comprasDni[0]
@@ -96,7 +102,7 @@ def verEstadisticas():
         print("Cliente con la compra más alta:")
         print(f"- DNI: {dniCompraMax}")
         print(f"- Total de la compra: ${cantCompraMax}")
-        input("Presione cualquier tecla para volver")
+        input("Presione Enter para continuar...")
         verEstadisticas()
     elif opcionNum == "4":
         verEstadisticasCliente()
