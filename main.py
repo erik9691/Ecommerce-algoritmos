@@ -48,14 +48,14 @@ def verEstadisticas():
         print(f"Facturación total: ${dineroTotal}")
         print("================================================================")
         input("Presione Enter para continuar...")
-        verEstadisticas()
+        return verEstadisticas()
     elif opcionNum == "2":
         print("Facturación total por producto (Ordenado por Facturación):")
         for i in range(len(productosId)):
             print(f"- {productosNombre[i]} ({productosId[i]}): ${productosRecaudacion[i]}")
         print("================================================================")
         input("Presione Enter para continuar...")
-        verEstadisticas()
+        return verEstadisticas()
     elif opcionNum == "3":
         dniCompraMax = comprasDni[0]
         cantCompraMax = comprasTotal[0]
@@ -68,7 +68,7 @@ def verEstadisticas():
         print(f"- Total de la compra: ${cantCompraMax}")
         print("================================================================")
         input("Presione Enter para continuar...")
-        verEstadisticas()
+        return verEstadisticas()
 
 def verEstadisticaProducto():
     #Pantalla inicial con productos
@@ -91,7 +91,7 @@ def verEstadisticaProducto():
     print(f"Cantidad de compras: {productosVendidos[productoNum]}")
     print("================================================================")
     input("Presione Enter para continuar...")
-    verEstadisticaProducto()
+    return verEstadisticaProducto()
     
 def verEstadisticaCliente():
     #Pantalla inicial con clientes
@@ -119,70 +119,88 @@ def verEstadisticaCliente():
             print(f"- Producto: {comprasProductoId[i]} | Cantidad comprado: {comprasCantidad[i]} | Total Facturado: ${comprasTotal[i]} | Tipo de Pago: {comprasMedioPago[i]}")
     print("================================================================")
     input("Presione Enter para continuar...")
-    verEstadisticaCliente()
+    return verEstadisticaCliente()
 
-def gestionarStock():
+def gestionarStock(producto):
+    print("================================================================")
+    print(f"-----AJUSTANDO STOCK {productosNombre[producto]} ({productosStock[producto]})-------")
+    ajusteStock=int(input("Ingrese un número positivo para sumar stock y uno negativo para restar: "))
+    nuevoStock= productosStock[producto] + ajusteStock
+    if nuevoStock < 0:
+        print("⛝       Cambio no realizado       ⛝ ")
+        print("================================================================")
+        print("X---X---X---EL STOCK DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarStock()
+    else:
+        productosStock[producto]=nuevoStock
+        print("================================================================")
+        print(f"Nuevo Stock de {productosNombre[producto]} | Stock actualizado: {productosStock[producto]}")
+        print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
     
-    print("\n--- GESTIÓN DE INVENTARIO Y PRECIOS ---")
+def gestionarPrecio(producto):
+    print("================================================================")
+    print(f"-----AJUSTANDO PRECIO {productosNombre[producto]} (${productosPrecio[producto]})-------")
+    ajustePrecio=int(input("Ingrese el nuevo precio del producto: $"))
+    if ajustePrecio<=0:
+        print("================================================================")
+        print("X---X---X---EL PRECIO DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
+        print("⛝       Cambio no realizado       ⛝ ")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarPrecio()
+    else:    
+        productosPrecio[producto]=ajustePrecio
+        print("================================================================")
+        print(f"Nuevo Precio de {productosNombre[producto]} | Precio actualizado: ${productosPrecio[producto]}")
+        print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
 
-    print("--- PRODUCTOS ACTUALES ---")
+def gestionarProductos():
+    print("================================================================")
+    print("--- GESTIÓN DE INVENTARIO Y PRECIOS ---")
+    
+    print("[0] Volver")
     for i in range(len(productosNombre)):
         print(f"[{i+1}] {productosNombre[i]} | Precio: ${productosPrecio[i]} | Stock: {productosStock[i]}")
      
-    opcion=int(input("Seleccione el producto a modificar:__"))
+    opcion=int(input("Seleccione el producto a modificar: "))
     
-    if opcion > len(productosNombre):
+    if opcion == 0:
+        return
+    elif opcion > len(productosNombre):
+        print("================================================================")
         print("⛝ OPCION NO VALIDA ⛝")
-        gestionarStock()
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
     else:
-        opcion=opcion-1
-        print("-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-")
+        opcion = opcion-1
+        print("================================================================")
         print('\033[1m\033[4m' f"Edición del producto: {productosNombre[opcion]} | Stock: {productosStock[opcion]} | Precio: {productosPrecio[opcion]}" '\033[0m')
-        print("")
-        print("⚒---⚒︎---⚒---⚒---⚒---⚒---⚒---⚒---⚒---⚒---⚒---⚒")
+        print("[0] Volver")
         print("[1] Modificar Stock")
         print("[2] Modificar Precio")
-        print("[3] ATRAS")
-        print("")
         ajuste=int(input("Ingrese el ajuste deseado: "))
        
-
-        if ajuste == 1:
-            print(f"-----AJUSTANDO STOCK {productosNombre[opcion]} ({productosStock[opcion]})-------")
-            ajusteStock=int(input("Ingrese + o - para modificar el stock: "))
-            nuevoStock= productosStock[opcion] + ajusteStock
-            if nuevoStock < 0:
-                print("⛝       Cambio no realizado       ⛝ ")
-                print("X---X---X---EL STOCK DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
-                return gestionarStock()
-            
-            else:
-                productosStock[opcion]=nuevoStock
-                print("-----------------------------------------------")
-                print(f"Nuevo Stock de {productosNombre[opcion]} | Stock actualizado: {productosStock[opcion]}")
-                print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
-                return gestionarStock()
-        
-        if ajuste == 2:
-            print(f"-----AJUSTANDO PRECIO {productosNombre[opcion]} (${productosPrecio[opcion]})-------")
-            ajustePrecio=int(input("Ingrese el nuevo precio del producto: $"))
-            if ajustePrecio<=0:
-                print("X---X---X---EL PRECIO DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
-                print("⛝       Cambio no realizado       ⛝ ")
-                gestionarStock()
-            else:    
-                productosPrecio[opcion]=ajustePrecio
-                print("--------------------------------------------------")
-                print(f"Nuevo Precio de {productosNombre[opcion]} | Precio actualizado: ${productosPrecio[opcion]}")
-                print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
-                gestionarStock()
-        
-        if ajuste == 3:
-            gestionarStock()
-            
+        if ajuste == 0:
+            return gestionarProductos()
+        elif ajuste == 1:
+            gestionarStock(opcion)
+        elif ajuste == 2:
+            gestionarPrecio(opcion)
         else:
+            print("================================================================")
             print("⛝ OPCION NO VALIDA ⛝")
-            gestionarStock()
+            print("================================================================")
+            input("Presione Enter para continuar...")
+            return gestionarProductos()
 
 def salir():
     """Función para salir del programa con confirmación del usuario"""
@@ -214,7 +232,7 @@ def mostrarMenu():
         print("[2] Ver estadísticas totales 📈")
         print("[3] Ver estadísticas por producto 📊")
         print("[4] Ver estadísticas por cliente 🙋")
-        print("[5] Gestionar Stock 📦")
+        print("[5] Gestionar Productos 📦")
         print("[6] Cupones 🎟️")
         print("[7] Salir ❌")
         print("Seleccione opción: ", end="")
@@ -231,7 +249,7 @@ def mostrarMenu():
         elif opcion == "4":
             verEstadisticaCliente()
         elif opcion == "5":
-            gestionarStock()
+            gestionarProductos()
         elif opcion == "6":
             print("\n[Función Cupones - En desarrollo]")
             input("Presione Enter para continuar...")
