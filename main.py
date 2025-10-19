@@ -1,3 +1,7 @@
+# =================== IMPORTS ===================
+
+import random
+
 # =================== LISTAS PARALELAS ===================
 
 # Productos
@@ -26,100 +30,106 @@ clienteCompras = []
 cuponesCodigo = ["6852", "4182", "2186", "5742"]
 cuponesDescuento = [15, 25, 30, 40]
 
-# =================== FUNCIONES  ===================
-def verEstadisticas():
-    #Pantalla inicial con opciones
-    print("================================================================")
-    print("- - - - - 📈 ESTADÍSTICAS DE VENTAS 📊 - - - - -")
-    print("[0] Volver")
-    print("[1] Facturación total")
-    print("[2] Facturación por producto")
-    print("[3] Cliente con mayor compra")
-    opcionNum = input("Seleccione una opción: ")
+# =================== FUNCIONES AUXILIARES  ===================
 
-    #Mostrar estadistica de acuerdo a numero seleccionado
-    if opcionNum == "0":
-        return
-    print("================================================================")
-    if opcionNum == "1":
-        dineroTotal = 0
-        for producto in productosRecaudacion:
-            dineroTotal += producto
-        print(f"Facturación total: ${dineroTotal}")
-        print("================================================================")
-        input("Presione Enter para continuar...")
-        return verEstadisticas()
-    elif opcionNum == "2":
-        print("Facturación total por producto (Ordenado por Facturación):")
-        for i in range(len(productosId)):
-            print(f"- {productosNombre[i]} ({productosId[i]}): ${productosRecaudacion[i]}")
-        print("================================================================")
-        input("Presione Enter para continuar...")
-        return verEstadisticas()
-    elif opcionNum == "3":
-        dniCompraMax = comprasDni[0]
-        cantCompraMax = comprasTotal[0]
-        for i in range(len(comprasId)):
-            if comprasTotal[i] > cantCompraMax:
-                cantCompraMax = comprasTotal[i]
-                dniCompraMax = comprasDni[i]
-        print("Cliente con la compra más alta:")
-        print(f"- DNI: {dniCompraMax}")
-        print(f"- Total de la compra: ${cantCompraMax}")
-        print("================================================================")
-        input("Presione Enter para continuar...")
-        return verEstadisticas()
+def esNumero(texto):
+    numeros = "0123456789"
+    if len(texto) == 0:
+        return False
+    for caracter in texto:
+        if caracter not in numeros:
+            return False
+    return True
 
-def verEstadisticaProducto():
-    #Pantalla inicial con productos
-    print("================================================================")
-    print("- - - - - 📈 ESTADÍSTICAS POR PRODUCTO 📊 - - - - -")
-    print("[0] Volver")
-    for i in range(len(productosId)):
-        print(f"[{i+1}] {productosNombre[i]} ({productosId[i]})")
-    productoNum = int(input("Seleccione un producto: ")) - 1
+def validarDNI(dni):
+    if esNumero(dni) and len(dni) == 8 and int(dni) > 0:
+        return True
+    else:
+        return False
+    
+def copiarLista(lista):
+    copia = []
+    for elemento in lista:
+        copia.append(elemento)
+    return copia
 
-    #Si presiona 0 salir de funcion
-    if productoNum == (-1):
-        return
-    
-    print("================================================================")
-    
-    #Segunda pantalla con estadísticas para producto seleccionado
-    print(f"- - - - - Estadísticas para {productosNombre[productoNum]} - - - - -")
-    print(f"Facturación total: ${productosRecaudacion[productoNum]}")
-    print(f"Cantidad de compras: {productosVendidos[productoNum]}")
-    print("================================================================")
-    input("Presione Enter para continuar...")
-    return verEstadisticaProducto()
-    
-def verEstadisticaCliente():
-    #Pantalla inicial con clientes
-    print("================================================================")
-    print("- - - - - 📈 VENTAS POR CLIENTE 📊 - - - - -")
-    print("[0] Volver")
-    for i in range(len(clienteDni)):
-        print(f"[{i+1}] {clienteDni[i]}")
-    clienteNum = int(input("Seleccione un cliente: ")) - 1
+def ordenamientoSeleccion(lista, mayor_a_menor = False, listasParalelas = []):
+    largo = len(lista)
+    for i in range(largo - 1):
+        for j in range(i + 1, largo):
+            if mayor_a_menor:
+                if lista[i] < lista[j]:
+                    if len(listasParalelas) > 0:
+                        for listaParalela in listasParalelas:
+                            aux = listaParalela[i]
+                            listaParalela[i] = listaParalela[j]
+                            listaParalela[j] = aux
+                    aux = lista[i]
+                    lista[i] = lista[j]
+                    lista[j] = aux
+            else:
+                if lista[i] > lista[j]:
+                    if len(listasParalelas) > 0:
+                        for listaParalela in listasParalelas:
+                            aux = listaParalela[i]
+                            listaParalela[i] = listaParalela[j]
+                            listaParalela[j] = aux
+                    aux = lista[i]
+                    lista[i] = lista[j]
+                    lista[j] = aux
 
-    #Si presiona 0 salir de funcion
-    if clienteNum == (-1):
-        return
+def calcularPorcentajes(lista):
+    # Devuelve una lista con el porcentaje que representa cada elemento del total
+    total = 0
+    porcentajes = []
+    for valor in lista:
+        total += valor
+    for valor in lista:
+        if valor == 0:
+            porcentajes.append(0)
+        else:
+            porcentajes.append((valor / total) * 100)
+    return porcentajes
+
+def registrarCompra(dni, productoId, cantidad, medioPago, total):
+    # Generar ID
+    nuevoId = len(comprasId) + 1
     
-    dniSelect = clienteDni[clienteNum]
-    print("================================================================")
+    # Agregar compra
+    comprasId.append(nuevoId)
+    comprasDni.append(int(dni))
+    comprasProductoId.append(productoId)
+    comprasCantidad.append(cantidad)
+    comprasTotal.append(total)
+    comprasMedioPago.append(medioPago)
     
-    #Segunda pantalla con estadísticas de todas las compras, filtrado por el cliente seleccionado
-    print(f"- - - - - Cliente ({dniSelect}) - - - - -")
-    print(f"Pagos totales: ${clienteRecaudacion[clienteNum]}")
-    print(f"Cantidad de compras: {clienteCompras[clienteNum]}")
-    print("\nProductos comprados:")
-    for i in range(len(comprasId)):
-        if comprasDni[i] == dniSelect:
-            print(f"- Producto: {comprasProductoId[i]} | Cantidad comprado: {comprasCantidad[i]} | Total Facturado: ${comprasTotal[i]} | Tipo de Pago: {comprasMedioPago[i]}")
-    print("================================================================")
-    input("Presione Enter para continuar...")
-    return verEstadisticaCliente()
+    # Actualizar cliente
+    dniNum = int(dni)
+    clienteExiste = False
+    
+    i = 0
+    while i < len(clienteDni) and not clienteExiste:
+        if clienteDni[i] == dniNum:
+            clienteRecaudacion[i] = clienteRecaudacion[i] + total
+            clienteCompras[i] = clienteCompras[i] + 1
+            clienteExiste = True
+        i = i + 1
+
+    if not clienteExiste:
+        clienteDni.append(dniNum)
+        clienteRecaudacion.append(total)
+        clienteCompras.append(1)
+    
+    # Actualizar producto
+    i = 0
+    productoEncontrado = False
+    while i < len(productosId) and not productoEncontrado:
+        if productosId[i] == productoId:
+            productosStock[i] = productosStock[i] - cantidad
+            productosVendidos[i] = productosVendidos[i] + cantidad
+            productosRecaudacion[i] = productosRecaudacion[i] + total
+            productoEncontrado = True
+        i = i + 1
 
 def gestionarStock(producto):
     print("================================================================")
@@ -162,6 +172,259 @@ def gestionarPrecio(producto):
         input("Presione Enter para continuar...")
         return gestionarProductos()
 
+# =================== FUNCIONES PRINCIPALES  ===================
+
+def Comprar():
+    print("================================================================")
+    print("- - - - - 💸 COMPRA 💸 - - - - -")
+
+    # Sugerir un producto aleatorio
+    if len(productosNombre) > 0:
+        random_index = random.randint(0, len(productosNombre) - 1)
+        print("================================================================")
+        print(f"💡 Producto recomendado de hoy: {productosNombre[random_index]} — ${productosPrecio[random_index]} ({productosStock[random_index]} en stock)")
+        print("================================================================")
+
+    # DNI
+    print("Ingrese 0 para volver al menu")
+    dni = input("Ingrese su DNI: ")
+    if dni == "0":
+        return
+    elif validarDNI(dni):
+        # Medio de pago
+        medioPago = ""
+        while True:
+            print("================================================================")
+            print("- - - - - MEDIO DE PAGO - - - - -")
+            print("[0] Volver")
+            print("[1] Efectivo")
+            print("[2] Tarjeta")
+            medio = input("Medio de pago: ")
+
+            if medio == "0":
+                return Comprar()
+            elif medio == "1":
+                medioPago = "Efectivo"
+                break
+            elif medio == "2":
+                medioPago = "Tarjeta"
+                break
+            else:
+                print("================================================================")
+                print("❌ Opción inválida")
+
+        # Mostrar productos
+        prodInput = ""
+        productoIndice = ""
+        while True:
+            print("================================================================")
+            print("- - - - - PRODUCTOS DISPONIBLES - - - - -")
+            for i in range(len(productosNombre)):
+                print(f"[{i}] {productosNombre[i]} - ${productosPrecio[i]}")
+
+            prodInput = input("Seleccione producto (número): ")
+            if esNumero(prodInput):
+                productoIndice = int(prodInput)
+
+            if esNumero(prodInput) and productoIndice >= 0 and productoIndice < len(productosNombre):
+                if productosStock[productoIndice] > 0:
+                    break
+                else:
+                    print("================================================================")
+                    print("❌ Sin stock")
+            else:
+                print("================================================================")
+                print("❌ Producto no válido")
+        
+        # Cantidad
+        cantidad = ""
+        while True:
+            print("================================================================")
+            print(f"- - - - - CANTIDAD DE PRODUCTO - - - - -")
+
+            cantInput = input(f"Cantidad de {productosNombre[productoIndice]}: ")
+            if esNumero(cantInput):
+                cantidad = int(cantInput)
+            
+            if esNumero(cantInput) and cantidad > 0 and cantidad <= productosStock[productoIndice]:
+                break
+            else:
+                print("================================================================")
+                print(f"❌ Cantidad inválida. Max: {productosStock[productoIndice]}")
+
+        # Calcular subtotal
+        subtotal = productosPrecio[productoIndice] * cantidad
+        descuento = 0
+        
+        # Cupón
+        while True:
+            print("================================================================")
+            print(f"- - - - - CUPÓN - - - - -")
+            usarCupon = input("¿Usar cupón? (S/N): ")
+            if usarCupon.upper() == "S":
+                while True:
+                    print("Ingrese 0 para cancelar ingreso de cupón")
+                    codigo = input("Código del cupón: ")
+                    print("================================================================")
+                    if codigo == "0":
+                        break
+                    elif codigo in cuponesCodigo:
+                        indiceCupon = cuponesCodigo.index(codigo)
+                        descuento = cuponesDescuento[indiceCupon]
+                        print(f"Cupón aplicado: {descuento}% descuento")
+                        break
+                    else:
+                        print("Cupón inválido")
+                break
+            elif usarCupon.upper() == "N":
+                break
+            else:
+                print("================================================================")
+                print("❌ Opción inválida")
+        
+        # Calcular total
+        total = subtotal * (100 - descuento) / 100
+
+        # Confirmar
+        print("================================================================")
+        print(f"- - - - - CONFIRMACIÓN DE COMPRA - - - - -")
+        print(f"Resumen: {productosNombre[productoIndice]} x{cantidad}")
+        print(f"Subtotal: ${subtotal}")
+        if descuento > 0:
+            print(f"Descuento: {descuento}%")
+        print(f"Total: ${total}")
+        
+        confirmar = input("Confirmar compra (S/N): ")
+        if confirmar.upper() == "S":
+            registrarCompra(dni, productosId[productoIndice], cantidad, medioPago, total)
+            print("================================================================")
+            print("✅ Compra realizada")
+        else:
+            print("================================================================")
+            print("Compra cancelada")
+    else:
+        print("================================================================")
+        print("❌ DNI inválido")
+        return Comprar()
+    
+    print("================================================================")
+    input("Presione Enter para continuar...")
+
+def verEstadisticas():
+    #Pantalla inicial con opciones
+    print("================================================================")
+    print("- - - - - 📈 ESTADÍSTICAS DE VENTAS 📊 - - - - -")
+    print("[0] Volver")
+    print("[1] Facturación total")
+    print("[2] Facturación por producto")
+    print("[3] Cliente con mayor compra")
+    opcionNum = input("Seleccione una opción: ")
+
+    #Mostrar estadistica de acuerdo a numero seleccionado
+    if opcionNum == "0":
+        return
+    print("================================================================")
+    if opcionNum == "1":
+        dineroTotal = 0
+        for producto in productosRecaudacion:
+            dineroTotal += producto
+        print(f"Facturación total: ${dineroTotal}")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return verEstadisticas()
+    elif opcionNum == "2":
+        print("Facturación total por producto (Ordenado por Facturación):")
+        # Ordenar listas por facturación
+        recaudacionOrdenado = copiarLista(productosRecaudacion)
+        idOrdenado = copiarLista(productosId)
+        nombreOrdenado = copiarLista(productosNombre)
+        ordenamientoSeleccion(recaudacionOrdenado,True,[idOrdenado,nombreOrdenado])
+        # Calcular porcentaje de facturacion
+        recaudacionOrdenadoPorcent = calcularPorcentajes(recaudacionOrdenado)
+        for i in range(len(productosId)):
+            print(f"- {nombreOrdenado[i]} ({idOrdenado[i]}): ${recaudacionOrdenado[i]} ({recaudacionOrdenadoPorcent[i]}%)")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return verEstadisticas()
+    elif opcionNum == "3":
+        if len(comprasDni) == 0:
+            print("No hay clientes registrados")
+            print("================================================================")
+            input("Presione Enter para continuar...")
+            return verEstadisticas()
+        dniCompraMax = comprasDni[0]
+        cantCompraMax = comprasTotal[0]
+        for i in range(len(comprasId)):
+            if comprasTotal[i] > cantCompraMax:
+                cantCompraMax = comprasTotal[i]
+                dniCompraMax = comprasDni[i]
+        print("Cliente con la compra más alta:")
+        print(f"- DNI: {dniCompraMax}")
+        print(f"- Total de la compra: ${cantCompraMax}")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return verEstadisticas()
+
+def verEstadisticaProducto():
+    #Pantalla inicial con productos
+    print("================================================================")
+    print("- - - - - 📈 ESTADÍSTICAS POR PRODUCTO 📊 - - - - -")
+    print("[0] Volver")
+    for i in range(len(productosId)):
+        print(f"[{i+1}] {productosNombre[i]} ({productosId[i]})")
+    productoNum = int(input("Seleccione un producto: ")) - 1
+
+    #Si presiona 0 salir de funcion
+    if productoNum == (-1):
+        return
+    
+    print("================================================================")
+    
+    #Segunda pantalla con estadísticas para producto seleccionado
+    print(f"- - - - - ESTADÍSTICAS PARA {productosNombre[productoNum]} - - - - -")
+    print(f"Facturación total: ${productosRecaudacion[productoNum]}")
+    print(f"Cantidad de compras: {productosVendidos[productoNum]}")
+    print("================================================================")
+    input("Presione Enter para continuar...")
+    return verEstadisticaProducto()
+    
+def verEstadisticaCliente():
+    #Pantalla inicial con clientes
+    print("================================================================")
+    print("- - - - - 📈 VENTAS POR CLIENTE 📊 - - - - -")
+    
+    if len(comprasDni) == 0:
+        print("No hay clientes registrados")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return
+    
+    print("[0] Volver")
+    for i in range(len(clienteDni)):
+        print(f"[{i+1}] {clienteDni[i]}")
+    clienteNum = int(input("Seleccione un cliente: ")) - 1
+
+    #Si presiona 0 salir de funcion
+    if clienteNum == (-1):
+        return
+    
+    dniSelect = clienteDni[clienteNum]
+    print("================================================================")
+    
+    #Segunda pantalla con estadísticas de todas las compras, filtrado por el cliente seleccionado
+    print(f"- - - - - Cliente ({dniSelect}) - - - - -")
+    print(f"Pagos totales: ${clienteRecaudacion[clienteNum]}")
+    print(f"Cantidad de compras: {clienteCompras[clienteNum]}")
+    print("\nProductos comprados:")
+    for i in range(len(comprasId)):
+        if comprasDni[i] == dniSelect:
+            print(f"- Producto: {comprasProductoId[i]} | Cantidad comprado: {comprasCantidad[i]} | Total Facturado: ${comprasTotal[i]} | Tipo de Pago: {comprasMedioPago[i]}")
+    print("================================================================")
+    input("Presione Enter para continuar...")
+    return verEstadisticaCliente()
+
+
+
 def gestionarProductos():
     print("================================================================")
     print("--- GESTIÓN DE INVENTARIO Y PRECIOS ---")
@@ -202,6 +465,97 @@ def gestionarProductos():
             input("Presione Enter para continuar...")
             return gestionarProductos()
 
+def gestionarCupones():
+    print("================================================================")
+    print("- - - - - 🎟️ GESTIÓN DE CUPONES 🎟️ - - - - -")
+
+    print("[0] Volver")
+    print("[1] Ver cupones")
+    print("[2] Borrar cupón")
+    print("[3] Modificar cupón")
+    print("[4] Agregar cupón")
+
+    opcionNum = input("Seleccione una opción: ")
+
+    if opcionNum == "0":
+        return
+    elif opcionNum == "1":
+        print("================================================================")
+        print("- - - - - CUPONES ACTUALES - - - - -")
+        if len(cuponesCodigo) == 0:
+            print("No hay cupones disponibles.")
+        else:
+            for i in range(len(cuponesCodigo)):
+                print(f"{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarCupones()
+    elif opcionNum == "2":
+        print("================================================================")
+        print("- - - - - BORRAR CUPÓN - - - - -")
+        if len(cuponesCodigo) == 0:
+            print("No hay cupones disponibles.")
+            print("================================================================")
+            input("Presione Enter para continuar...")
+            return gestionarCupones()
+        else:
+            print("[0] Volver")
+            for i in range(len(cuponesCodigo)):
+                print(f"[{i+1}]{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+
+            borrarNum = input("Seleccione un cupón para borrar: ")
+
+            if borrarNum == "0":
+                return gestionarCupones()        
+    elif opcionNum == "3":
+        print("================================================================")
+        print("- - - - - MODIFICAR CUPÓN - - - - -")
+        if len(cuponesCodigo) == 0:
+            print("No hay cupones disponibles.")
+            print("================================================================")
+            input("Presione Enter para continuar...")
+            return gestionarCupones()
+        else:
+            print("[0] Volver")
+            for i in range(len(cuponesCodigo)):
+                print(f"[{i+1}]{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+
+            modificarNum = input("Seleccione un cupón para modificar: ")
+
+            if modificarNum == "0":
+                return gestionarCupones()
+    elif opcionNum == "4":
+        print("================================================================")
+        print("- - - - - AGREGAR CUPÓN - - - - -")
+        print("Ingrese 0 para cancelar ingreso")
+        codigo = input("Ingrese el código del cupón (4 dígitos): ")
+        
+        if codigo == "0":
+            return gestionarCupones()
+        elif codigo in cuponesCodigo:
+            print("================================================================")
+            print("❌ Cupón ya existe")
+        else:
+            descuento = 0
+            while descuento <= 0 or descuento > 100:
+                descInput = input("Descuento (1-100): ")
+                if esNumero(descInput):
+                    descuento = int(descInput)
+                    if descuento <= 0 or descuento > 100:
+                        print("================================================================")
+                        print("❌ Descuento debe estar entre 1 y 100")
+                else:
+                    print("================================================================")
+                    print("❌ Ingrese un número válido")
+            
+            cuponesCodigo.append(codigo)
+            cuponesDescuento.append(descuento)
+            print("================================================================")
+            print("✅ Cupón agregado")
+
+
+    
+
 def salir():
     """Función para salir del programa con confirmación del usuario"""
     print("================================================================")
@@ -233,15 +587,14 @@ def mostrarMenu():
         print("[3] Ver estadísticas por producto 📊")
         print("[4] Ver estadísticas por cliente 🙋")
         print("[5] Gestionar Productos 📦")
-        print("[6] Cupones 🎟️")
+        print("[6] Gestionar Cupones 🎟️")
         print("[7] Salir ❌")
         print("Seleccione opción: ", end="")
         
         opcion = input()
 
         if opcion == "1":
-            print("\n[Función Comprar - En desarrollo]")
-            input("Presione Enter para continuar...")
+            Comprar()
         elif opcion == "2":
             verEstadisticas()
         elif opcion == "3":
@@ -251,13 +604,14 @@ def mostrarMenu():
         elif opcion == "5":
             gestionarProductos()
         elif opcion == "6":
-            print("\n[Función Cupones - En desarrollo]")
-            input("Presione Enter para continuar...")
+            gestionarCupones()
         elif opcion == "7":
             if salir():
                 break
         else:
-            print("\n❌ Opción inválida. Por favor, seleccione una opción del 1 al 7.")
+            print("================================================================")
+            print("❌ Opción inválida. Por favor, seleccione una opción del 1 al 7.")
+            print("================================================================")
             input("Presione Enter para continuar...")
 
 # =================== PROGRAMA PRINCIPAL ===================
