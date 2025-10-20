@@ -431,7 +431,7 @@ def gestionarProductos():
     
     print("[0] Volver")
     for i in range(len(productosNombre)):
-        print(f"[{i+1}] {productosNombre[i]} | Precio: ${productosPrecio[i]} | Stock: {productosStock[i]}")
+        print(f"[{i+1}] {productosNombre[i]} ({productosId[i]}) | Precio: ${productosPrecio[i]} | Stock: {productosStock[i]}")
      
     opcion=int(input("Seleccione el producto a modificar: "))
     
