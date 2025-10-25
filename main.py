@@ -2,34 +2,6 @@
 
 import random
 
-# =================== LISTAS PARALELAS ===================
-
-# Productos
-productosId = ["id0", "id1", "id2", "id3"]
-productosNombre = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
-productosCategoria = ["Vestimenta", "Vestimenta", "Tecnología", "Tecnología"]
-productosPrecio = [15.00, 45.00, 499.99, 75.50]
-productosStock = [50, 30, 10, 40]
-productosVendidos = [0, 0, 0, 0]
-productosRecaudacion = [0, 0, 0, 0]
-
-# Compras
-comprasId = []
-comprasDni = []
-comprasProductoId = []
-comprasCantidad = []
-comprasTotal = []
-comprasMedioPago = []
-
-# Clientes
-clienteDni = []
-clienteRecaudacion = []
-clienteCompras = []
-
-# Cupones
-cuponesCodigo = ["6852", "4182", "2186", "5742"]
-cuponesDescuento = [15, 25, 30, 40]
-
 # =================== FUNCIONES AUXILIARES  ===================
 
 def esNumero(texto):
@@ -193,7 +165,8 @@ def Comprar():
     elif validarDNI(dni):
         # Medio de pago
         medioPago = ""
-        while True:
+        pagoSeleccionado = False
+        while not pagoSeleccionado:
             print("================================================================")
             print("- - - - - MEDIO DE PAGO - - - - -")
             print("[0] Volver")
@@ -205,18 +178,19 @@ def Comprar():
                 return Comprar()
             elif medio == "1":
                 medioPago = "Efectivo"
-                break
+                pagoSeleccionado = True
             elif medio == "2":
                 medioPago = "Tarjeta"
-                break
+                pagoSeleccionado = True
             else:
                 print("================================================================")
                 print("❌ Opción inválida")
 
         # Mostrar productos
+        prodValido = False
         prodInput = ""
         productoIndice = ""
-        while True:
+        while not prodValido:
             print("================================================================")
             print("- - - - - PRODUCTOS DISPONIBLES - - - - -")
             for i in range(len(productosNombre)):
@@ -228,7 +202,7 @@ def Comprar():
 
             if esNumero(prodInput) and productoIndice >= 0 and productoIndice < len(productosNombre):
                 if productosStock[productoIndice] > 0:
-                    break
+                    prodValido = True
                 else:
                     print("================================================================")
                     print("❌ Sin stock")
@@ -237,8 +211,9 @@ def Comprar():
                 print("❌ Producto no válido")
         
         # Cantidad
+        cantidadValida = False
         cantidad = ""
-        while True:
+        while not cantidadValida:
             print("================================================================")
             print(f"- - - - - CANTIDAD DE PRODUCTO - - - - -")
 
@@ -247,7 +222,7 @@ def Comprar():
                 cantidad = int(cantInput)
             
             if esNumero(cantInput) and cantidad > 0 and cantidad <= productosStock[productoIndice]:
-                break
+                cantidadValida = True
             else:
                 print("================================================================")
                 print(f"❌ Cantidad inválida. Max: {productosStock[productoIndice]}")
@@ -257,27 +232,29 @@ def Comprar():
         descuento = 0
         
         # Cupón
-        while True:
+        cuponElegido = False
+        while not cuponElegido:
             print("================================================================")
             print(f"- - - - - CUPÓN - - - - -")
             usarCupon = input("¿Usar cupón? (S/N): ")
             if usarCupon.upper() == "S":
-                while True:
+                ingresandoCupon = True
+                while ingresandoCupon:
                     print("Ingrese 0 para cancelar ingreso de cupón")
                     codigo = input("Código del cupón: ")
                     print("================================================================")
                     if codigo == "0":
-                        break
+                        ingresandoCupon = False
                     elif codigo in cuponesCodigo:
                         indiceCupon = cuponesCodigo.index(codigo)
                         descuento = cuponesDescuento[indiceCupon]
                         print(f"Cupón aplicado: {descuento}% descuento")
-                        break
+                        ingresandoCupon = False
                     else:
                         print("Cupón inválido")
-                break
+                cuponElegido = True
             elif usarCupon.upper() == "N":
-                break
+                cuponElegido = True
             else:
                 print("================================================================")
                 print("❌ Opción inválida")
@@ -309,6 +286,7 @@ def Comprar():
     
     print("================================================================")
     input("Presione Enter para continuar...")
+
 
 def verEstadisticas():
     #Pantalla inicial con opciones
@@ -553,9 +531,6 @@ def gestionarCupones():
             print("================================================================")
             print("✅ Cupón agregado")
 
-
-    
-
 def salir():
     """Función para salir del programa con confirmación del usuario"""
     print("================================================================")
@@ -577,7 +552,8 @@ def salir():
 
 def mostrarMenu():
     """Función que muestra el menú principal y gestiona la navegación"""
-    while True:
+    seguirPrograma = True
+    while seguirPrograma:
         print("================================================================")
         print("E-Commerce⦿")
         print("================================================================")
@@ -607,12 +583,40 @@ def mostrarMenu():
             gestionarCupones()
         elif opcion == "7":
             if salir():
-                break
+                seguirPrograma = False
         else:
             print("================================================================")
             print("❌ Opción inválida. Por favor, seleccione una opción del 1 al 7.")
             print("================================================================")
             input("Presione Enter para continuar...")
+
+# =================== LISTAS PARALELAS ===================
+
+# Productos
+productosId = ["id0", "id1", "id2", "id3"]
+productosNombre = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
+productosCategoria = ["Vestimenta", "Vestimenta", "Tecnología", "Tecnología"]
+productosPrecio = [15.00, 45.00, 499.99, 75.50]
+productosStock = [50, 30, 10, 40]
+productosVendidos = [0, 0, 0, 0]
+productosRecaudacion = [0, 0, 0, 0]
+
+# Compras
+comprasId = []
+comprasDni = []
+comprasProductoId = []
+comprasCantidad = []
+comprasTotal = []
+comprasMedioPago = []
+
+# Clientes
+clienteDni = []
+clienteRecaudacion = []
+clienteCompras = []
+
+# Cupones
+cuponesCodigo = ["6852", "4182", "2186", "5742"]
+cuponesDescuento = [15, 25, 30, 40]
 
 # =================== PROGRAMA PRINCIPAL ===================
 
