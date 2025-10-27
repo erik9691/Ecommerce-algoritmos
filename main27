@@ -1,0 +1,985 @@
+# =================== IMPORTS ===================
+
+
+
+
+import random
+
+# =================== FUNCIONES AUXILIARES  ===================
+
+def esNumero(texto):
+    numeros = "0123456789"
+    largo = len(texto)
+    primerDigito = True
+    if largo == 0 or largo == 1 and texto[0] not in numeros:
+        return False
+    for caracter in texto:
+        if caracter not in numeros:
+            if caracter != "-" and not primerDigito:
+                return False
+        primerDigito = False
+    return True
+
+def validarDNI(dni):
+    if esNumero(dni) and len(dni) == 8 and int(dni) > 0:
+        return True
+    else:
+        return False
+    
+def copiarLista(lista):
+    copia = []
+    for elemento in lista:
+        copia.append(elemento)
+    return copia
+
+def ordenamientoSeleccion(lista, mayor_a_menor = False, listasParalelas = []):
+    largo = len(lista)
+    for i in range(largo - 1):
+        for j in range(i + 1, largo):
+            if mayor_a_menor:
+                if lista[i] < lista[j]:
+                    if len(listasParalelas) > 0:
+                        for listaParalela in listasParalelas:
+                            aux = listaParalela[i]
+                            listaParalela[i] = listaParalela[j]
+                            listaParalela[j] = aux
+                    aux = lista[i]
+                    lista[i] = lista[j]
+                    lista[j] = aux
+            else:
+                if lista[i] > lista[j]:
+                    if len(listasParalelas) > 0:
+                        for listaParalela in listasParalelas:
+                            aux = listaParalela[i]
+                            listaParalela[i] = listaParalela[j]
+                            listaParalela[j] = aux
+                    aux = lista[i]
+                    lista[i] = lista[j]
+                    lista[j] = aux
+
+def calcularPorcentajes(lista):
+    # Devuelve una lista con el porcentaje que representa cada elemento del total
+    total = 0
+    porcentajes = []
+    for valor in lista:
+        total += valor
+    for valor in lista:
+        if valor == 0:
+            porcentajes.append(0)
+        else:
+            porcentajes.append((valor / total) * 100)
+    return porcentajes
+
+def registrarCompra(dni, nombre, productoId, cantidad, medioPago, total):
+    # Generar ID
+    nuevoId = len(comprasId) + 1
+    
+    # Agregar compra
+    comprasId.append(nuevoId)
+    comprasDni.append(int(dni))
+    comprasProductoId.append(productoId)
+    comprasCantidad.append(cantidad)
+    comprasTotal.append(total)
+    comprasMedioPago.append(medioPago)
+    
+    # Actualizar cliente
+    dniNum = int(dni)
+    clienteExiste = False
+    
+    i = 0
+    while i < len(clienteDni) and not clienteExiste:
+        if clienteDni[i] == dniNum:
+            clienteRecaudacion[i] = clienteRecaudacion[i] + total
+            clienteCompras[i] = clienteCompras[i] + 1
+            # Actualizar nombre por si cambió
+            clienteNombre[i] = nombre
+            clienteExiste = True
+        i = i + 1
+
+    if not clienteExiste:
+        clienteDni.append(dniNum)
+        clienteNombre.append(nombre)
+        clienteRecaudacion.append(total)
+        clienteCompras.append(1)
+    
+    # Actualizar producto
+    i = 0
+    productoEncontrado = False
+    while i < len(productosId) and not productoEncontrado:
+        if productosId[i] == productoId:
+            productosStock[i] = productosStock[i] - cantidad
+            productosVendidos[i] = productosVendidos[i] + cantidad
+            productosRecaudacion[i] = productosRecaudacion[i] + total
+            productoEncontrado = True
+        i = i + 1
+
+def gestionarStock(producto):
+    print("================================================================")
+    print(f"-----AJUSTANDO STOCK {productosNombre[producto]} ({productosStock[producto]})-------")
+    seleccion = input("Ingrese un número positivo para sumar stock y uno negativo para restar: ")
+    
+    # Verificación
+    if esNumero(seleccion):
+        ajusteStock = int(seleccion)
+        nuevoStock = productosStock[producto] + ajusteStock
+    else:
+        print("================================================================")
+        print("❌ Ingrese un número")
+        return gestionarStock(producto)
+    
+    if nuevoStock < 0:
+        print("⛝       Cambio no realizado       ⛝ ")
+        print("================================================================")
+        print("X---X---X---EL STOCK DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarStock(producto)
+    else:
+        productosStock[producto]=nuevoStock
+        print("================================================================")
+        print(f"Nuevo Stock de {productosNombre[producto]} | Stock actualizado: {productosStock[producto]}")
+        print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
+    
+def gestionarPrecio(producto):
+    print("================================================================")
+    print(f"-----AJUSTANDO PRECIO {productosNombre[producto]} (${productosPrecio[producto]})-------")
+    seleccion = input("Ingrese el nuevo precio del producto: $")
+
+    # Verificación
+    if esNumero(seleccion):
+        ajustePrecio = int(seleccion)
+    else:
+        print("================================================================")
+        print("❌ Ingrese un número")
+        return gestionarPrecio(producto)
+    
+    if ajustePrecio<=0:
+        print("================================================================")
+        print("X---X---X---EL PRECIO DEL PRODUCTO NO PUEDE SER NEGATIVO---X---X---X")
+        print("⛝       Cambio no realizado       ⛝ ")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarPrecio(producto)
+    else:    
+        productosPrecio[producto]=ajustePrecio
+        print("================================================================")
+        print(f"Nuevo Precio de {productosNombre[producto]} | Precio actualizado: ${productosPrecio[producto]}")
+        print("☑    CAMBIO REALIZADO CORRECTAMENTE    ☑")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
+
+def modificarProducto(producto):
+    """Función para modificar datos completos de un producto"""
+    print("================================================================")
+    print(f"--- MODIFICANDO PRODUCTO: {productosNombre[producto]} ---")
+    print(f"ID Actual: {productosId[producto]}")
+    print(f"Nombre Actual: {productosNombre[producto]}")
+    print(f"Categoría Actual: {productosCategoria[producto]}")
+    print(f"Precio Actual: ${productosPrecio[producto]}")
+    print(f"Stock Actual: {productosStock[producto]}")
+    print("================================================================")
+    print("[0] Volver")
+    print("[1] Modificar nombre")
+    print("[2] Modificar categoría") 
+    print("[3] Modificar precio")
+    print("[4] Modificar stock")
+    
+    opcion = input("Seleccione qué desea modificar: ")
+    
+    if opcion == "0":
+        return gestionarProductos()
+    elif opcion == "1":
+        nuevoNombre = input("Ingrese el nuevo nombre del producto: ")
+        if nuevoNombre.strip() == "":
+            print("================================================================")
+            print("❌ El nombre no puede estar vacío")
+            input("Presione Enter para continuar...")
+            return modificarProducto(producto)
+        productosNombre[producto] = nuevoNombre
+        print("================================================================")
+        print("☑ Nombre actualizado correctamente")
+        input("Presione Enter para continuar...")
+        return modificarProducto(producto)
+    elif opcion == "2":
+        nuevaCategoria = input("Ingrese la nueva categoría del producto: ")
+        if nuevaCategoria.strip() == "":
+            print("================================================================")
+            print("❌ La categoría no puede estar vacía")
+            input("Presione Enter para continuar...")
+            return modificarProducto(producto)
+        productosCategoria[producto] = nuevaCategoria
+        print("================================================================")
+        print("☑ Categoría actualizada correctamente")
+        input("Presione Enter para continuar...")
+        return modificarProducto(producto)
+    elif opcion == "3":
+        return gestionarPrecio(producto)
+    elif opcion == "4":
+        return gestionarStock(producto)
+    else:
+        print("================================================================")
+        print("❌ Opción inválida")
+        input("Presione Enter para continuar...")
+        return modificarProducto(producto)
+
+def agregarNuevoProducto():
+    """Función para agregar un nuevo producto al inventario"""
+    print("================================================================")
+    print("--- AGREGAR NUEVO PRODUCTO ---")
+    print("================================================================")
+    
+    # Generar nuevo ID automáticamente
+    nuevoId = f"id{len(productosId)}"
+    
+    # Solicitar datos del producto
+    print("Ingrese 0 en cualquier momento para cancelar")
+    
+    # Nombre
+    nombre = input("Nombre del producto: ")
+    if nombre == "0":
+        return gestionarProductos()
+    if nombre.strip() == "":
+        print("================================================================")
+        print("❌ El nombre no puede estar vacío")
+        input("Presione Enter para continuar...")
+        return agregarNuevoProducto()
+    
+    # Categoría
+    categoria = input("Categoría del producto: ")
+    if categoria == "0":
+        return gestionarProductos()
+    if categoria.strip() == "":
+        print("================================================================")
+        print("❌ La categoría no puede estar vacía")
+        input("Presione Enter para continuar...")
+        return agregarNuevoProducto()
+    
+    # Precio
+    precio = 0
+    while precio <= 0:
+        precioInput = input("Precio del producto: $")
+        if precioInput == "0":
+            return gestionarProductos()
+        if esNumero(precioInput):
+            precio = float(precioInput)
+            if precio <= 0:
+                print("================================================================")
+                print("❌ El precio debe ser mayor a 0")
+        else:
+            print("================================================================")
+            print("❌ Ingrese un número válido")
+    
+    # Stock inicial
+    stock = -1
+    while stock < 0:
+        stockInput = input("Stock inicial del producto: ")
+        if stockInput == "0":
+            return gestionarProductos()
+        if esNumero(stockInput):
+            stock = int(stockInput)
+            if stock < 0:
+                print("================================================================")
+                print("❌ El stock no puede ser negativo")
+        else:
+            print("================================================================")
+            print("❌ Ingrese un número válido")
+    
+    # Confirmar creación
+    print("================================================================")
+    print("--- CONFIRMACIÓN DE NUEVO PRODUCTO ---")
+    print(f"ID: {nuevoId}")
+    print(f"Nombre: {nombre}")
+    print(f"Categoría: {categoria}")
+    print(f"Precio: ${precio}")
+    print(f"Stock inicial: {stock}")
+    print("================================================================")
+    
+    confirmar = input("¿Confirmar creación del producto? (S/N): ")
+    if confirmar.upper() == "S":
+        # Agregar a todas las listas paralelas
+        productosId.append(nuevoId)
+        productosNombre.append(nombre)
+        productosCategoria.append(categoria)
+        productosPrecio.append(precio)
+        productosStock.append(stock)
+        productosVendidos.append(0)  # Inicialmente 0 vendidos
+        productosRecaudacion.append(0)  # Inicialmente 0 recaudación
+        
+        print("================================================================")
+        print("✅ Producto agregado exitosamente")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
+    else:
+        print("================================================================")
+        print("❌ Creación cancelada")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
+
+# =================== FUNCIONES PRINCIPALES  ===================
+
+def Comprar():
+    print("================================================================")
+    print("- - - - - 💸 COMPRA 💸 - - - - -")
+
+    # Sugerir un producto aleatorio
+    if len(productosNombre) > 0:
+        random_index = random.randint(0, len(productosNombre) - 1)
+        print("================================================================")
+        print(f"💡 Producto recomendado de hoy: {productosNombre[random_index]} — ${productosPrecio[random_index]} ({productosStock[random_index]} en stock)")
+        print("================================================================")
+
+    # DNI
+    print("Ingrese 0 para volver al menu")
+    dni = input("Ingrese su DNI: ")
+    if dni == "0":
+        return
+    elif validarDNI(dni):
+        # Nombre del cliente
+        nombre = ""
+        while nombre.strip() == "":
+            nombre = input("Ingrese su nombre: ")
+            if nombre == "0":
+                return
+            if nombre.strip() == "":
+                print("================================================================")
+                print("❌ El nombre no puede estar vacío")
+        # Medio de pago
+        medioPago = ""
+        pagoSeleccionado = False
+        while not pagoSeleccionado:
+            print("================================================================")
+            print("- - - - - MEDIO DE PAGO - - - - -")
+            print("[0] Volver")
+            print("[1] Efectivo")
+            print("[2] Tarjeta")
+            medio = input("Medio de pago: ")
+
+            if medio == "0":
+                return Comprar()
+            elif medio == "1":
+                medioPago = "Efectivo"
+                pagoSeleccionado = True
+            elif medio == "2":
+                medioPago = "Tarjeta"
+                pagoSeleccionado = True
+            else:
+                print("================================================================")
+                print("❌ Opción inválida")
+
+        # Mostrar productos
+        prodValido = False
+        prodInput = ""
+        productoIndice = ""
+        while not prodValido:
+            print("================================================================")
+            print("- - - - - PRODUCTOS DISPONIBLES - - - - -")
+            for i in range(len(productosNombre)):
+                print(f"[{i}] {productosNombre[i]} - ${productosPrecio[i]}")
+
+            prodInput = input("Seleccione producto (número): ")
+            if esNumero(prodInput):
+                productoIndice = int(prodInput)
+
+            if esNumero(prodInput) and productoIndice >= 0 and productoIndice < len(productosNombre):
+                if productosStock[productoIndice] > 0:
+                    prodValido = True
+                else:
+                    print("================================================================")
+                    print("❌ Sin stock")
+            else:
+                print("================================================================")
+                print("❌ Producto no válido")
+        
+        # Cantidad
+        cantidadValida = False
+        cantidad = ""
+        while not cantidadValida:
+            print("================================================================")
+            print(f"- - - - - CANTIDAD DE PRODUCTO - - - - -")
+
+            cantInput = input(f"Cantidad de {productosNombre[productoIndice]}: ")
+            if esNumero(cantInput):
+                cantidad = int(cantInput)
+            
+            if esNumero(cantInput) and cantidad > 0 and cantidad <= productosStock[productoIndice]:
+                cantidadValida = True
+            else:
+                print("================================================================")
+                print(f"❌ Cantidad inválida. Max: {productosStock[productoIndice]}")
+
+        # Calcular subtotal
+        subtotal = productosPrecio[productoIndice] * cantidad
+        subtotal = int(subtotal)
+        descuento = 0
+        
+        # Cupón
+        cuponElegido = False
+        while not cuponElegido:
+            print("================================================================")
+            print(f"- - - - - CUPÓN - - - - -")
+            usarCupon = input("¿Usar cupón? (S/N): ")
+            if usarCupon == "S" or usarCupon == "s":
+                ingresandoCupon = True
+                while ingresandoCupon:
+                    print("Ingrese 0 para cancelar ingreso de cupón")
+                    codigo = input("Código del cupón: ")
+                    print("================================================================")
+                    if codigo == "0":
+                        ingresandoCupon = False
+                    elif codigo in cuponesCodigo:
+                        indiceCupon = cuponesCodigo.index(codigo)
+                        descuento = cuponesDescuento[indiceCupon]
+                        descuento=int(descuento)
+                        print(f"Cupón aplicado: {descuento}% descuento")
+                        ingresandoCupon = False
+                    else:
+                        print("Cupón inválido")
+                cuponElegido = True
+            elif usarCupon == "N" or usarCupon== "n":
+                cuponElegido = True
+            else:
+                print("================================================================")
+                print("❌ Opción inválida")
+        
+        # Calcular total
+        total = subtotal * (100 - descuento) / 100
+
+        # Confirmar
+        print("================================================================")
+        print(f"- - - - - CONFIRMACIÓN DE COMPRA - - - - -")
+        print(f"Resumen: {productosNombre[productoIndice]} x{cantidad}")
+        print(f"Subtotal: ${subtotal}")
+        if descuento > 0:
+            print(f"Descuento: {descuento}%")
+        print(f"Total: ${total}")
+        
+        confirmar = input("Confirmar compra (S/N): ")
+        if confirmar == "S" or confirmar == "s":
+            registrarCompra(dni, nombre, productosId[productoIndice], cantidad, medioPago, total)
+            print("================================================================")
+            print("✅ Compra realizada")
+        else:
+            print("================================================================")
+            print("Compra cancelada")
+    else:
+        print("================================================================")
+        print("❌ DNI inválido")
+        return Comprar()
+    
+    print("================================================================")
+    input("Presione Enter para continuar...")
+
+
+def verEstadisticas():
+    #Pantalla inicial con opciones
+    print("================================================================")
+    print("- - - - - 📈 ESTADÍSTICAS DE VENTAS 📊 - - - - -")
+    print("[0] Volver")
+    print("[1] Facturación total")
+    print("[2] Facturación por producto")
+    print("[3] Facturación por categoría")
+    print("[4] Cliente con mayor compra")
+    opcionNum = input("Seleccione una opción: ")
+
+    #Mostrar estadistica de acuerdo a numero seleccionado
+    if opcionNum == "0":
+        return
+    print("================================================================")
+    if opcionNum == "1":
+        dineroTotal = 0
+        for producto in productosRecaudacion:
+            dineroTotal += producto
+        print(f"Facturación total: ${dineroTotal}")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return verEstadisticas()
+    elif opcionNum == "2":
+        print("Facturación total por producto (Ordenado por Facturación):")
+        # Ordenar listas por facturación
+        recaudacionOrdenado = copiarLista(productosRecaudacion)
+        idOrdenado = copiarLista(productosId)
+        nombreOrdenado = copiarLista(productosNombre)
+        ordenamientoSeleccion(recaudacionOrdenado,True,[idOrdenado,nombreOrdenado])
+        # Calcular porcentaje de facturacion
+        recaudacionOrdenadoPorcent = calcularPorcentajes(recaudacionOrdenado)
+        for i in range(len(productosId)):
+            print(f"- {nombreOrdenado[i]} ({idOrdenado[i]}): ${recaudacionOrdenado[i]} ({recaudacionOrdenadoPorcent[i]}%)")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return verEstadisticas()
+    elif opcionNum == "3":
+        print("Facturación total por categoría:")
+        # Crear listas paralelas de categorías únicas y sus recaudaciones
+        categorias = []
+        facturacionCategoria = []
+        for i in range(len(productosCategoria)):
+            categoria = productosCategoria[i]
+            recaudacion = productosRecaudacion[i]
+            encontrado = False
+            for j in range(len(categorias)):
+                if categorias[j] == categoria:
+                    facturacionCategoria[j] += recaudacion
+                    encontrado = True
+            if not encontrado:
+                categorias.append(categoria)
+                facturacionCategoria.append(recaudacion)
+        # Ordenar por facturación
+        recaudacionOrdenado = copiarLista(facturacionCategoria)
+        categoriasOrdenado = copiarLista(categorias)
+        ordenamientoSeleccion(recaudacionOrdenado, True, [categoriasOrdenado])
+        # Calcular porcentajes
+        recaudacionOrdenadoPorcent = calcularPorcentajes(recaudacionOrdenado)
+        for i in range(len(categoriasOrdenado)):
+            print(f"- {categoriasOrdenado[i]}: ${recaudacionOrdenado[i]} ({recaudacionOrdenadoPorcent[i]}%)")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return verEstadisticas()
+    elif opcionNum == "4":
+        if len(comprasDni) == 0:
+            print("No hay clientes registrados")
+            print("================================================================")
+            input("Presione Enter para continuar...")
+            return verEstadisticas()
+        dniCompraMax = comprasDni[0]
+        cantCompraMax = comprasTotal[0]
+        for i in range(len(comprasId)):
+            if comprasTotal[i] > cantCompraMax:
+                cantCompraMax = comprasTotal[i]
+                dniCompraMax = comprasDni[i]
+        
+        # Buscar el nombre del cliente con mayor compra
+        nombreClienteMax = ""
+        for j in range(len(clienteDni)):
+            if clienteDni[j] == dniCompraMax:
+                nombreClienteMax = clienteNombre[j]
+                break
+        
+        print("Cliente con la compra más alta:")
+        print(f"- Nombre: {nombreClienteMax}")
+        print(f"- DNI: {dniCompraMax}")
+        #print(f"- Total de la compra: ${cantCompraMax}")
+        for i in range(len(comprasId)):
+            if comprasDni[i] == dniCompraMax:
+                print(f"- Producto: {comprasProductoId[i]} | Cantidad comprado: {comprasCantidad[i]} | Total Facturado: ${comprasTotal[i]} | Tipo de Pago: {comprasMedioPago[i]}")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return verEstadisticas()
+    else:
+        print("❌ Opción inválida")
+        return verEstadisticas()
+
+def verEstadisticaProducto():
+    # Pantalla inicial con productos
+    print("================================================================")
+    print("- - - - - 📈 ESTADÍSTICAS POR PRODUCTO 📊 - - - - -")
+    print("[0] Volver")
+    for i in range(len(productosId)):
+        print(f"[{i+1}] {productosNombre[i]} ({productosId[i]})")
+    productoSel = input("Seleccione un producto: ")
+    
+    # Verificación
+    if esNumero(productoSel):
+        productoNum = int(productoSel)-1
+    else:
+        print("================================================================")
+        print("❌ Ingrese un número")
+        return verEstadisticaProducto()
+    if productoNum == (-1):
+        return
+    elif productoNum < (-1) or productoNum >= len(productosId):
+        print("================================================================")
+        print("❌ Opción inválida")
+        return verEstadisticaProducto()
+    
+    print("================================================================")
+    
+    #Segunda pantalla con estadísticas para producto seleccionado
+    print(f"- - - - - ESTADÍSTICAS PARA {productosNombre[productoNum]} - - - - -")
+    print(f"Facturación total: ${productosRecaudacion[productoNum]}")
+    print(f"Cantidad de compras: {productosVendidos[productoNum]}")
+    print("================================================================")
+    input("Presione Enter para continuar...")
+    return verEstadisticaProducto()
+
+def verEstadisticaCategoria():
+    # Pantalla inicial con categorías
+    print("================================================================")
+    print("- - - - - 🗂️ ESTADÍSTICAS POR CATEGORÍA 🗂️ - - - - -")
+    print("[0] Volver")
+
+    # Eliminar categorías repetidas
+    categoriasUnicas = []
+    for categoria in productosCategoria:
+        if categoria not in categoriasUnicas:
+            categoriasUnicas.append(categoria)
+
+    # Mostrar menú de categorías
+    for i in range(len(categoriasUnicas)):
+        print(f"[{i+1}] {categoriasUnicas[i]}")
+
+    categoriaSel = input("Seleccione una categoría: ")
+
+    # Verificación
+    if esNumero(categoriaSel):
+        categoriaNum = int(categoriaSel)-1
+    else:
+        print("================================================================")
+        print("❌ Ingrese un número")
+        return verEstadisticaCategoria()
+    if categoriaNum == (-1):
+        return
+    elif categoriaNum < (-1) or categoriaNum >= len(categoriasUnicas):
+        print("================================================================")
+        print("❌ Opción inválida")
+        return verEstadisticaCategoria()
+    
+    print("================================================================")
+
+    # Determinar categoría seleccionada
+    categoriaSeleccionada = categoriasUnicas[categoriaNum]
+
+    # Calcular estadísticas para esa categoría
+    totalRecaudacion = 0
+    totalVendidos = 0
+
+    for i in range(len(productosId)):
+        if productosCategoria[i] == categoriaSeleccionada:
+            totalRecaudacion += productosRecaudacion[i]
+            totalVendidos += productosVendidos[i]
+
+    # Mostrar estadísticas
+    print(f"- - - - - ESTADÍSTICAS PARA {categoriaSeleccionada} - - - - -")
+    print(f"Facturación total: ${totalRecaudacion}")
+    print(f"Cantidad total de productos vendidos: {totalVendidos}")
+    print("================================================================")
+    input("Presione Enter para continuar...")
+    return verEstadisticaCategoria()
+    
+def verEstadisticaCliente():
+    #Pantalla inicial con clientes
+    print("================================================================")
+    print("- - - - - 📈 VENTAS POR CLIENTE 📊 - - - - -")
+    
+    if len(comprasDni) == 0:
+        print("No hay clientes registrados")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return
+    
+    print("[0] Volver")
+    for i in range(len(clienteDni)):
+        print(f"[{i+1}] {clienteNombre[i]} (DNI: {clienteDni[i]})")
+    clienteSel = input("Seleccione un cliente: ")
+
+    # Verificación
+    if esNumero(clienteSel):
+        clienteNum = int(clienteSel)-1
+    else:
+        print("================================================================")
+        print("❌ Ingrese un número")
+        return verEstadisticaCliente()
+    if clienteNum == (-1):
+        return
+    elif clienteNum < (-1) or clienteNum >= len(clienteDni):
+        print("================================================================")
+        print("❌ Opción inválida")
+        return verEstadisticaCliente()
+    
+    dniSelect = clienteDni[clienteNum]
+    nombreSelect = clienteNombre[clienteNum]
+    print("================================================================")
+    
+    #Segunda pantalla con estadísticas de todas las compras, filtrado por el cliente seleccionado
+    print(f"- - - - - Cliente: {nombreSelect} (DNI: {dniSelect}) - - - - -")
+    print(f"Pagos totales: ${clienteRecaudacion[clienteNum]}")
+    print(f"Cantidad de compras: {clienteCompras[clienteNum]}")
+    print("\nProductos comprados:")
+    for i in range(len(comprasId)):
+        if comprasDni[i] == dniSelect:
+            print(f"- Producto: {comprasProductoId[i]} | Cantidad comprado: {comprasCantidad[i]} | Total Facturado: ${comprasTotal[i]} | Tipo de Pago: {comprasMedioPago[i]}")
+    print("================================================================")
+    input("Presione Enter para continuar...")
+    return verEstadisticaCliente()
+
+def gestionarProductos():
+    print("================================================================")
+    print("--- GESTIÓN DE INVENTARIO Y PRECIOS ---")
+    
+    print("[0] Volver")
+    print("[-1] ➕ Agregar nuevo producto")
+    for i in range(len(productosNombre)):
+        print(f"[{i+1}] {productosNombre[i]} ({productosId[i]}) | Precio: ${productosPrecio[i]} | Stock: {productosStock[i]}")
+     
+    seleccion = input("Seleccione una opción: ")
+    
+    # Verificación
+    if esNumero(seleccion):
+        opcion = int(seleccion)
+    else:
+        print("================================================================")
+        print("❌ Ingrese un número")
+        return gestionarProductos()
+    
+    if opcion == 0:
+        return
+    elif opcion == -1:
+        return agregarNuevoProducto()
+    elif opcion < 0 or opcion > len(productosNombre):
+        print("================================================================")
+        print("❌ Opción inválida")
+        return gestionarProductos()
+    
+    opcion = opcion-1
+    print("================================================================")
+    print('\033[1m\033[4m' f"Edición del producto: {productosNombre[opcion]} | Stock: {productosStock[opcion]} | Precio: {productosPrecio[opcion]}" '\033[0m')
+    print("[0] Volver")
+    print("[1] Modificar Stock")
+    print("[2] Modificar Precio")
+    print("[3] Modificar datos completos")
+    ajuste = input("Ingrese la opción deseada: ")
+    
+    if ajuste == "0":
+        return gestionarProductos()
+    elif ajuste == "1":
+        gestionarStock(opcion)
+    elif ajuste == "2":
+        gestionarPrecio(opcion)
+    elif ajuste == "3":
+        modificarProducto(opcion)
+    else:
+        print("================================================================")
+        print("⛝ OPCION NO VALIDA ⛝")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarProductos()
+
+def gestionarCupones():
+    print("================================================================")
+    print("- - - - - 🎟️ GESTIÓN DE CUPONES 🎟️ - - - - -")
+
+    print("[0] Volver")
+    print("[1] Ver cupones")
+    print("[2] Borrar cupón")
+    print("[3] Modificar cupón")
+    print("[4] Agregar cupón")
+
+    opcionNum = input("Seleccione una opción: ")
+
+    if opcionNum == "0":
+        return
+    elif opcionNum == "1":
+        print("================================================================")
+        print("- - - - - CUPONES ACTUALES - - - - -")
+        if len(cuponesCodigo) == 0:
+            print("No hay cupones disponibles.")
+        else:
+            for i in range(len(cuponesCodigo)):
+                print(f"{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarCupones()
+    elif opcionNum == "2":
+        print("================================================================")
+        print("- - - - - BORRAR CUPÓN - - - - -")
+        if len(cuponesCodigo) == 0:
+            print("No hay cupones disponibles.")
+            print("================================================================")
+            input("Presione Enter para continuar...")
+            return gestionarCupones()
+        else:
+            print("[0] Volver")
+            for i in range(len(cuponesCodigo)):
+                print(f"[{i+1}]{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+            borrarNum = int(input("Seleccione un cupón para borrar (Solo ingrese numeros): "))
+
+            if borrarNum == "0":
+                return gestionarCupones()
+            else:
+                x=borrarNum-1
+                print("------------------------------------------------------------")
+                print(f"❌ Estas seguro que deseas eliminar el cupón: {cuponesCodigo[x]} {cuponesDescuento[x]}% descuento ❌❗❗")
+                opp=input("====> S/N: ")
+                
+                if opp == "s" or opp == "S":
+                    del cuponesCodigo[x]
+                    del cuponesDescuento[x]
+                    print("============================================================")
+                    print("==================❌ CUPÓN ELIMINADO ❌==================")
+                    return gestionarCupones ()
+                else:
+                    print("===============================================")
+                    print("❌ ❌ ❌ Operacion cancelada ❌ ❌ ❌")
+                    return gestionarCupones ()
+                
+                
+               
+    elif opcionNum == "3":
+        print("================================================================")
+        print("- - - - - MODIFICAR CUPÓN - - - - -")
+        if len(cuponesCodigo) == 0:
+            print("No hay cupones disponibles.")
+            print("================================================================")
+            input("Presione Enter para continuar...")
+            return gestionarCupones()
+        else:
+            print("[0] Volver")
+            for i in range(len(cuponesCodigo)):
+                print(f"[{i+1}]{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+
+            modificarNum = input("Seleccione un cupón para modificar (Solo numeros): ")
+
+            if modificarNum == "0":
+                return gestionarCupones()
+            elif int(modificarNum)>0 and int(modificarNum)<=(len(cuponesCodigo)+1):
+                modificarNum=int(modificarNum)
+                ModC=modificarNum-1
+                print(f"- - - - -Modificando Cupon: {cuponesCodigo[ModC]} {cuponesDescuento[ModC]}% descuento- - - - -")
+                print()
+                NewC=input("Ingrese el nuevo codigo del cupón: ")
+                NewD=input("Ingrese el nuevo descuento del cupón: ")
+                cuponesCodigo[ModC]=NewC
+                cuponesDescuento[ModC]=NewD
+                print("= = = = =Cupón modificado correctamente= = = = =")
+                print(f"Cupon modificado: Codigo={cuponesCodigo[ModC]} Descuento={cuponesDescuento[ModC]}%")
+                gestionarCupones()
+            else:
+                gestionarCupones()
+                
+    elif opcionNum == "4":
+        print("================================================================")
+        print("- - - - - AGREGAR CUPÓN - - - - -")
+        print("Ingrese 0 para cancelar ingreso")
+        codigo = input("Ingrese el código del cupón (4 dígitos): ")
+
+        if codigo == "0":
+            return gestionarCupones()
+        elif codigo in cuponesCodigo:
+            print("================================================================")
+            print("❌ Cupón ya existe")
+        elif len(codigo) < 4 or len(codigo) > 4:
+            print("================================================================")
+            print("❌ Código debe ser de 4 dígitos")
+        else:
+            descuento = 0
+            while descuento <= 0 or descuento > 100:
+                descInput = input("Descuento (1-100): ")
+                if esNumero(descInput):
+                    descuento = int(descInput)
+                    if descuento <= 0 or descuento > 100:
+                        print("================================================================")
+                        print("❌ Descuento debe estar entre 1 y 100")
+                else:
+                    print("================================================================")
+                    print("❌ Ingrese un número válido")
+            
+            cuponesCodigo.append(codigo)
+            cuponesDescuento.append(descuento)
+            print("================================================================")
+            print("✅ Cupón agregado")
+            return gestionarCupones()
+    else:
+        print("================================================================")
+        print("❌ Opción no válida")
+        return gestionarCupones()
+
+def salir():
+    """Función para salir del programa con confirmación del usuario"""
+    print("================================================================")
+    print("- - - - -❌ Salir ❌- - - - -")
+    print("¿Está seguro que quiere salir (S/N)?: ", end="")
+    
+    confirmacion = input().upper()
+    
+    if confirmacion == 'S' or confirmacion == 'SI':
+        print("\n================================================================")
+        print("Exit⦿")
+        print("¡Gracias por visitar nuestra tienda! 👋")
+        print("================================================================")
+        return True
+    else:
+        print("\n✅ Regresando al menú principal...")
+        input("Presione Enter para continuar...")
+        return False
+
+def mostrarMenu():
+    """Función que muestra el menú principal y gestiona la navegación"""
+    seguirPrograma = True
+    while seguirPrograma:
+        print("=======================================================================")
+        print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
+        print("=======================================================================")
+        print("Bienvenido a la tienda virtual 🏪")
+        print("[1] Comprar 💲")
+        print("[2] Ver estadísticas totales 📈")
+        print("[3] Ver estadísticas por producto 📊")
+        print("[4] Ver estadísticas por categoría 🗂️")
+        print("[5] Ver estadísticas por cliente 🙋")
+        print("[6] Gestionar Productos 📦")
+        print("[7] Gestionar Cupones 🎟️")
+        print("[8] Salir ❌")
+
+        opcion = input("Seleccione opción: ")
+
+        if opcion == "1":
+            Comprar()
+        elif opcion == "2":
+            verEstadisticas()
+        elif opcion == "3":
+            verEstadisticaProducto()
+        elif opcion == "4":
+            verEstadisticaCategoria()
+        elif opcion == "5":
+            verEstadisticaCliente()
+        elif opcion == "6":
+            gestionarProductos()
+        elif opcion == "7":
+            gestionarCupones()
+        elif opcion == "8":
+            if salir():
+                seguirPrograma = False
+        else:
+            print("================================================================")
+            print("❌ Opción inválida. Por favor, seleccione una opción del 1 al 8.")
+            print("================================================================")
+            input("Presione Enter para continuar...")
+
+
+
+# =================== LISTAS PARALELAS ===================
+
+# Productos
+productosId = ["id0", "id1", "id2", "id3"]
+productosNombre = ["Remera Algodón", "Pantalón Jean", "Consola PS5", "Auriculares BT"]
+productosCategoria = ["Vestimenta", "Vestimenta", "Tecnología", "Tecnología"]
+productosPrecio = [15.00, 45.00, 499.99, 75.50]
+productosStock = [50, 30, 10, 40]
+productosVendidos = [0, 0, 0, 0]
+productosRecaudacion = [0, 0, 0, 0]
+
+# Compras
+comprasId = []
+comprasDni = []
+comprasProductoId = []
+comprasCantidad = []
+comprasTotal = []
+comprasMedioPago = []
+
+# Clientes
+clienteDni = []
+clienteNombre = []
+clienteRecaudacion = []
+clienteCompras = []
+
+# Cupones
+cuponesCodigo = ["6852", "4182", "2186", "5742"]
+cuponesDescuento = [15, 25, 30, 40]
+
+# =================== PROGRAMA PRINCIPAL ===================
+
+print("Iniciando E-Commerce...")
+mostrarMenu()
