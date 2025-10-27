@@ -833,7 +833,7 @@ cuponesDescuento = [15, 25, 30, 40]
 
 # ADMINS
 
-NomAdmin=["Bernardo", "Juan", "Erik", "Laura"]
+NomAdmin=["Bernardo", "Juana", "Erik", "Laura"]
 DniAdmin=["60470761", "1111", "2222", "3333"]
 
 # =================== PROGRAMA PRINCIPAL ===================
