@@ -4,6 +4,33 @@ import random
 
 # =================== FUNCIONES AUXILIARES  ===================
 
+def verificarID():
+    ID = 0
+    nom = input("Ingrese su nombre: ")
+
+    dniValido = False
+    while not dniValido:
+        dni = input("Ingrese su DNI: ")
+        if validarDNI(dni):
+            dniValido = True
+        else:
+            print("================================================================")
+            print("❌ DNI inválido")
+            print("================================================================")
+
+    for i in range (len(NomAdmin)):
+        if nom == NomAdmin[i]:
+            ID = ID+1
+        if dni == DniAdmin[i]:
+            ID = ID+1
+
+    admin = False
+    if ID == 2:
+        admin = True
+
+    return admin, dni
+    
+    
 def esNumero(texto):
     numeros = "0123456789"
     largo = len(texto)
@@ -165,10 +192,144 @@ def gestionarPrecio(producto):
         print("================================================================")
         input("Presione Enter para continuar...")
         return gestionarProductos()
+    
+def verCupones():
+    print("================================================================")
+    print("- - - - - CUPONES ACTUALES - - - - -")
+    if len(cuponesCodigo) == 0:
+        print("No hay cupones disponibles.")
+    else:
+        for i in range(len(cuponesCodigo)):
+            print(f"{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+    print("================================================================")
+    input("Presione Enter para continuar...")
+    return gestionarCupones()
+
+def borrarCupon():
+    print("================================================================")
+    print("- - - - - BORRAR CUPÓN - - - - -")
+    if len(cuponesCodigo) == 0:
+        print("No hay cupones disponibles.")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarCupones()
+    else:
+        print("[0] Volver")
+        for i in range(len(cuponesCodigo)):
+            print(f"[{i+1}] {cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+        borrarSel = input("Seleccione un cupón para borrar: ")
+        
+        if esNumero(borrarSel):
+            borrarNum = int(borrarSel)
+        else:
+            print("================================================================")
+            print("❌ Ingrese un número")
+            return borrarCupon()
+
+        if borrarNum == "0":
+            return gestionarCupones()
+        elif borrarNum <= len(cuponesCodigo) and borrarNum > -1:
+            x=borrarNum-1
+            print("------------------------------------------------------------")
+            print(f"❌ Estas seguro que deseas eliminar el cupón: {cuponesCodigo[x]} {cuponesDescuento[x]}% descuento ❌❗❗")
+            opp=input("====> S/N: ")
+            
+            if opp == "s" or opp == "S":
+                del cuponesCodigo[x]
+                del cuponesDescuento[x]
+                print("============================================================")
+                print("==================❌ CUPÓN ELIMINADO ❌==================")
+                return gestionarCupones()
+            else:
+                print("===============================================")
+                print("❌ ❌ ❌ Operacion cancelada ❌ ❌ ❌")
+                return gestionarCupones()
+        else:
+            print("================================================================")
+            print("❌ Ingrese una opción válida")
+            return borrarCupon()
+
+def modificarCupon():
+    print("================================================================")
+    print("- - - - - MODIFICAR CUPÓN - - - - -")
+    if len(cuponesCodigo) == 0:
+        print("No hay cupones disponibles.")
+        print("================================================================")
+        input("Presione Enter para continuar...")
+        return gestionarCupones()
+    else:
+        print("[0] Volver")
+        for i in range(len(cuponesCodigo)):
+            print(f"[{i+1}] {cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
+
+        modificarSel = input("Seleccione un cupón para modificar: ")
+        
+        if esNumero(modificarSel):
+            modificarNum = int(modificarSel)
+        else:
+            print("================================================================")
+            print("❌ Ingrese un número")
+            return modificarCupon()
+
+        if modificarNum == "0":
+            return gestionarCupones()
+        elif modificarNum <= len(cuponesCodigo) and modificarNum > -1:
+            modificarNum=int(modificarNum)
+            ModC=modificarNum-1
+            print(f"- - - - -Modificando Cupon: {cuponesCodigo[ModC]} {cuponesDescuento[ModC]}% descuento- - - - -")
+            print()
+            NewC=input("Ingrese el nuevo codigo del cupón: ")
+            NewD=input("Ingrese el nuevo descuento del cupón: ")
+            cuponesCodigo[ModC]=NewC
+            cuponesDescuento[ModC]=NewD
+            print("= = = = =Cupón modificado correctamente= = = = =")
+            print(f"Cupon modificado: Codigo={cuponesCodigo[ModC]} Descuento={cuponesDescuento[ModC]}%")
+            gestionarCupones()
+        else:
+            print("================================================================")
+            print("❌ Ingrese una opción válida")
+            modificarCupon()
+
+def agregarCupon():
+    print("================================================================")
+    print("- - - - - AGREGAR CUPÓN - - - - -")
+    print("Ingrese 0 para cancelar ingreso")
+    codigo = input("Ingrese el código del cupón (4 dígitos): ")
+
+    if codigo == "0":
+        return gestionarCupones()
+    elif codigo in cuponesCodigo:
+        print("================================================================")
+        print("❌ Cupón ya existe")
+        return agregarCupon()
+    elif len(codigo) < 4 or len(codigo) > 4:
+        print("================================================================")
+        print("❌ Código debe ser de 4 dígitos")
+        return agregarCupon()
+    else:
+        descuento = 0
+        while descuento <= 0 or descuento > 100:
+            descInput = input("Descuento (1-100): ")
+            if esNumero(descInput):
+                descuento = int(descInput)
+                if descuento <= 0 or descuento > 100:
+                    print("================================================================")
+                    print("❌ Descuento debe estar entre 1 y 100")
+                    return agregarCupon()
+            else:
+                print("================================================================")
+                print("❌ Ingrese un número válido")
+                return agregarCupon()
+        
+        cuponesCodigo.append(codigo)
+        cuponesDescuento.append(descuento)
+        print("================================================================")
+        print("✅ Cupón agregado")
+        return gestionarCupones()
 
 # =================== FUNCIONES PRINCIPALES  ===================
 
-def Comprar():
+def Comprar(admin, ID):
     print("================================================================")
     print("- - - - - 💸 COMPRA 💸 - - - - -")
 
@@ -177,11 +338,15 @@ def Comprar():
         random_index = random.randint(0, len(productosNombre) - 1)
         print("================================================================")
         print(f"💡 Producto recomendado de hoy: {productosNombre[random_index]} — ${productosPrecio[random_index]} ({productosStock[random_index]} en stock)")
-        print("================================================================")
 
     # DNI
-    print("Ingrese 0 para volver al menu")
-    dni = input("Ingrese su DNI: ")
+    if admin:
+        print("================================================================")
+        print("Ingrese 0 para volver al menu")
+        dni = input("Ingrese su DNI: ")
+    else:
+        dni = ID
+    
     if dni == "0":
         return
     elif validarDNI(dni):
@@ -197,7 +362,10 @@ def Comprar():
             medio = input("Medio de pago: ")
 
             if medio == "0":
-                return Comprar()
+                if admin:
+                    return Comprar()
+                else:
+                    return
             elif medio == "1":
                 medioPago = "Efectivo"
                 pagoSeleccionado = True
@@ -251,6 +419,7 @@ def Comprar():
 
         # Calcular subtotal
         subtotal = productosPrecio[productoIndice] * cantidad
+        subtotal = int(subtotal)
         descuento = 0
         
         # Cupón
@@ -259,7 +428,7 @@ def Comprar():
             print("================================================================")
             print(f"- - - - - CUPÓN - - - - -")
             usarCupon = input("¿Usar cupón? (S/N): ")
-            if usarCupon.upper() == "S":
+            if usarCupon == "S" or usarCupon == "s":
                 ingresandoCupon = True
                 while ingresandoCupon:
                     print("Ingrese 0 para cancelar ingreso de cupón")
@@ -270,12 +439,13 @@ def Comprar():
                     elif codigo in cuponesCodigo:
                         indiceCupon = cuponesCodigo.index(codigo)
                         descuento = cuponesDescuento[indiceCupon]
+                        descuento=int(descuento)
                         print(f"Cupón aplicado: {descuento}% descuento")
                         ingresandoCupon = False
                     else:
                         print("Cupón inválido")
                 cuponElegido = True
-            elif usarCupon.upper() == "N":
+            elif usarCupon == "N" or usarCupon== "n":
                 cuponElegido = True
             else:
                 print("================================================================")
@@ -294,7 +464,7 @@ def Comprar():
         print(f"Total: ${total}")
         
         confirmar = input("Confirmar compra (S/N): ")
-        if confirmar.upper() == "S":
+        if confirmar == "S" or confirmar == "s":
             registrarCompra(dni, productosId[productoIndice], cantidad, medioPago, total)
             print("================================================================")
             print("✅ Compra realizada")
@@ -591,81 +761,13 @@ def gestionarCupones():
     if opcionNum == "0":
         return
     elif opcionNum == "1":
-        print("================================================================")
-        print("- - - - - CUPONES ACTUALES - - - - -")
-        if len(cuponesCodigo) == 0:
-            print("No hay cupones disponibles.")
-        else:
-            for i in range(len(cuponesCodigo)):
-                print(f"{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
-        print("================================================================")
-        input("Presione Enter para continuar...")
-        return gestionarCupones()
+        verCupones()
     elif opcionNum == "2":
-        print("================================================================")
-        print("- - - - - BORRAR CUPÓN - - - - -")
-        if len(cuponesCodigo) == 0:
-            print("No hay cupones disponibles.")
-            print("================================================================")
-            input("Presione Enter para continuar...")
-            return gestionarCupones()
-        else:
-            print("[0] Volver")
-            for i in range(len(cuponesCodigo)):
-                print(f"[{i+1}]{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
-
-            borrarNum = input("Seleccione un cupón para borrar: ")
-
-            if borrarNum == "0":
-                return gestionarCupones()        
+        borrarCupon()
     elif opcionNum == "3":
-        print("================================================================")
-        print("- - - - - MODIFICAR CUPÓN - - - - -")
-        if len(cuponesCodigo) == 0:
-            print("No hay cupones disponibles.")
-            print("================================================================")
-            input("Presione Enter para continuar...")
-            return gestionarCupones()
-        else:
-            print("[0] Volver")
-            for i in range(len(cuponesCodigo)):
-                print(f"[{i+1}]{cuponesCodigo[i]} ({cuponesDescuento[i]}% descuento)")
-
-            modificarNum = input("Seleccione un cupón para modificar: ")
-
-            if modificarNum == "0":
-                return gestionarCupones()
+        modificarCupon()
     elif opcionNum == "4":
-        print("================================================================")
-        print("- - - - - AGREGAR CUPÓN - - - - -")
-        print("Ingrese 0 para cancelar ingreso")
-        codigo = input("Ingrese el código del cupón (4 dígitos): ")
-
-        if codigo == "0":
-            return gestionarCupones()
-        elif codigo in cuponesCodigo:
-            print("================================================================")
-            print("❌ Cupón ya existe")
-        elif len(codigo) < 4 or len(codigo) > 4:
-            print("================================================================")
-            print("❌ Código debe ser de 4 dígitos")
-        else:
-            descuento = 0
-            while descuento <= 0 or descuento > 100:
-                descInput = input("Descuento (1-100): ")
-                if esNumero(descInput):
-                    descuento = int(descInput)
-                    if descuento <= 0 or descuento > 100:
-                        print("================================================================")
-                        print("❌ Descuento debe estar entre 1 y 100")
-                else:
-                    print("================================================================")
-                    print("❌ Ingrese un número válido")
-            
-            cuponesCodigo.append(codigo)
-            cuponesDescuento.append(descuento)
-            print("================================================================")
-            print("✅ Cupón agregado")
+        agregarCupon()
     else:
         print("================================================================")
         print("❌ Opción no válida")
@@ -690,50 +792,67 @@ def salir():
         input("Presione Enter para continuar...")
         return False
 
-def mostrarMenu():
+def mostrarMenu(admin, ID):
     """Función que muestra el menú principal y gestiona la navegación"""
     seguirPrograma = True
     while seguirPrograma:
-        print("================================================================")
-        print("E-Commerce⦿")
-        print("================================================================")
-        print("Bienvenido a la tienda virtual 🏪")
-        print("[1] Comprar 💲")
-        print("[2] Ver estadísticas totales 📈")
-        print("[3] Ver estadísticas por producto 📊")
-        print("[4] Ver estadísticas por categoría 🗂️")
-        print("[5] Ver estadísticas por cliente 🙋")
-        print("[6] Gestionar Productos 📦")
-        print("[7] Gestionar Cupones 🎟️")
-        print("[8] Salir ❌")
+        if admin:
+            print("=======================================================================")
+            print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
+            print("=======================================================================")
+            print("Bienvenido a la tienda virtual 🏪 ADMIN", ID)
+            print("[1] Comprar 💲")
+            print("[2] Ver estadísticas totales 📈")
+            print("[3] Ver estadísticas por producto 📊")
+            print("[4] Ver estadísticas por categoría 🗂️")
+            print("[5] Ver estadísticas por cliente 🙋")
+            print("[6] Gestionar Productos 📦")
+            print("[7] Gestionar Cupones 🎟️")
+            print("[8] Salir ❌")
 
-        opcion = input("Seleccione opción: ")
+            opcion = input("Seleccione opción: ")
 
-        if opcion == "1":
-            Comprar()
-        elif opcion == "2":
-            verEstadisticas()
-        elif opcion == "3":
-            verEstadisticaProducto()
-        elif opcion == "4":
-            verEstadisticaCategoria()
-        elif opcion == "5":
-            verEstadisticaCliente()
-        elif opcion == "6":
-            gestionarProductos()
-        elif opcion == "7":
-            gestionarCupones()
-        elif opcion == "8":
-            if salir():
-                seguirPrograma = False
+            if opcion == "1":
+                Comprar(admin, ID)
+            elif opcion == "2":
+                verEstadisticas()
+            elif opcion == "3":
+                verEstadisticaProducto()
+            elif opcion == "4":
+                verEstadisticaCategoria()
+            elif opcion == "5":
+                verEstadisticaCliente()
+            elif opcion == "6":
+                gestionarProductos()
+            elif opcion == "7":
+                gestionarCupones()
+            elif opcion == "8":
+                if salir():
+                    seguirPrograma = False
+            else:
+                print("================================================================")
+                print("❌ Opción inválida. Por favor, seleccione una opción del 1 al 8.")
+                print("================================================================")
+                input("Presione Enter para continuar...")         
         else:
-            print("================================================================")
-            print("❌ Opción inválida. Por favor, seleccione una opción del 1 al 8.")
-            print("================================================================")
-            input("Presione Enter para continuar...")
-
-
-
+            print("=======================================================================")
+            print("E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿E-Commerce⦿")
+            print("=======================================================================")
+            print("Bienvenido a la tienda virtual 🏪", ID)
+            print("[1] Comprar 💲")
+            print("[2] Salir ❌")
+            opcion = input("Seleccione opción: ")
+            if opcion == "1":
+                Comprar(admin, ID)
+            elif opcion == "2":
+                if salir():
+                    seguirPrograma = False
+            else:
+                print("================================================================")
+                print("❌ Opción inválida. Por favor, seleccione una opción del 1 al 8.")
+                print("================================================================")
+                input("Presione Enter para continuar...")
+            
 # =================== LISTAS PARALELAS ===================
 
 # Productos
@@ -762,7 +881,16 @@ clienteCompras = []
 cuponesCodigo = ["6852", "4182", "2186", "5742"]
 cuponesDescuento = [15, 25, 30, 40]
 
+# ADMINS
+
+NomAdmin=["Bernardo", "Juana", "Erik", "Laura"]
+DniAdmin=["60470761", "11111111", "47435898", "33333333"]
+
 # =================== PROGRAMA PRINCIPAL ===================
 
 print("Iniciando E-Commerce...")
-mostrarMenu()
+
+admin, ID = verificarID()
+
+
+mostrarMenu(admin, ID)
