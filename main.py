@@ -4,6 +4,29 @@ import random
 
 # =================== FUNCIONES AUXILIARES  ===================
 
+def borrarElemento(lista, valor, listasParalelas = []):
+    # Variables auxiliares
+    listaAux = []
+    paralelasAux = []
+    for list in listasParalelas:
+        paralelasAux.append([])
+    # Agregar todos los elementos menos el del valor a los aux
+    for i in range(len(lista)):
+        if lista[i] != valor:
+            listaAux.append(lista[i])
+            for j in range(len(listasParalelas)):
+                paralelasAux[j].append(listasParalelas[j][i])
+    # Limpiar listas
+    lista.clear()
+    for list in listasParalelas:
+        list.clear()
+    # Agregar cada elemento de los aux a las listas originales
+    for item in listaAux:
+        lista.append(item)
+    for i in range(len(listasParalelas)):
+        for j in range(len(paralelasAux[i])):
+            listasParalelas[i].append(paralelasAux[i][j])
+
 def busquedaBinaria(lista, valor, obtenerPosicion = False):
     inicio = 0
     fin = len(lista) - 1
@@ -258,8 +281,7 @@ def borrarCupon():
             opp=input("====> S/N: ")
             
             if opp == "s" or opp == "S":
-                del cuponesCodigo[x]
-                del cuponesDescuento[x]
+                borrarElemento(cuponesCodigo, cuponesCodigo[x], [cuponesDescuento])
                 print("============================================================")
                 print("==================❌ CUPÓN ELIMINADO ❌==================")
                 return gestionarCupones()
@@ -750,7 +772,7 @@ def gestionarProductos():
     
     opcion = opcion-1
     print("================================================================")
-    print('\033[1m\033[4m' f"Edición del producto: {productosNombre[opcion]} | Stock: {productosStock[opcion]} | Precio: {productosPrecio[opcion]}" '\033[0m')
+    print( f"Edición del producto: {productosNombre[opcion]} | Stock: {productosStock[opcion]} | Precio: {productosPrecio[opcion]}")
     print("[0] Volver")
     print("[1] Modificar Stock")
     print("[2] Modificar Precio")
@@ -802,9 +824,9 @@ def salir():
     print("- - - - -❌ Salir ❌- - - - -")
     print("¿Está seguro que quiere salir (S/N)?: ", end="")
     
-    confirmacion = input().upper()
+    confirmacion = input()
     
-    if confirmacion == 'S' or confirmacion == 'SI':
+    if confirmacion == 'S' or confirmacion == 'SI' or confirmacion == 's' or confirmacion == 'S':
         print("\n================================================================")
         print("Exit⦿")
         print("¡Gracias por visitar nuestra tienda! 👋")
