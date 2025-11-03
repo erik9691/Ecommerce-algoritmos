@@ -4,6 +4,29 @@ import random
 
 # =================== FUNCIONES AUXILIARES  ===================
 
+def busquedaBinaria(lista, valor, obtenerPosicion = False):
+    inicio = 0
+    fin = len(lista) - 1
+    encontrado = False
+    posicion = 0
+
+    while inicio <= fin and not encontrado:
+        medio = (inicio + fin) // 2 # posición central
+        if lista[medio] == valor:
+            encontrado = True
+            posicion = medio
+        elif valor < lista[medio]:
+            fin = medio - 1 # buscar en la mitad izquierda
+        else:
+            inicio = medio + 1 # buscar en la mitad derecha
+
+    if encontrado and obtenerPosicion:
+        return posicion
+    elif encontrado:
+        return True
+    else:
+        return False
+    
 def verificarID():
     ID = 0
     nom = input("Ingrese su nombre: ")
@@ -21,8 +44,8 @@ def verificarID():
     for i in range (len(NomAdmin)):
         if nom == NomAdmin[i]:
             ID = ID+1
-        if dni == DniAdmin[i]:
-            ID = ID+1
+    if busquedaBinaria(DniAdmin, dni):
+        ID = ID+1
 
     admin = False
     if ID == 2:
@@ -436,14 +459,15 @@ def Comprar(admin, ID):
                     print("================================================================")
                     if codigo == "0":
                         ingresandoCupon = False
-                    elif codigo in cuponesCodigo:
-                        indiceCupon = cuponesCodigo.index(codigo)
-                        descuento = cuponesDescuento[indiceCupon]
-                        descuento=int(descuento)
-                        print(f"Cupón aplicado: {descuento}% descuento")
-                        ingresandoCupon = False
                     else:
-                        print("Cupón inválido")
+                        for i in range(len(cuponesCodigo)):
+                            if codigo == cuponesCodigo[i]:
+                                descuento = int(cuponesDescuento[i])
+                                print(f"Cupón aplicado: {descuento}% descuento")
+                                ingresandoCupon = False
+                        if ingresandoCupon:
+                            print("Cupón inválido")
+                        
                 cuponElegido = True
             elif usarCupon == "N" or usarCupon== "n":
                 cuponElegido = True
