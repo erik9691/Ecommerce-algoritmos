@@ -85,7 +85,7 @@ def esNumero(texto):
         return False
     for caracter in texto:
         if caracter not in numeros:
-            if caracter != "-" and not primerDigito:
+            if caracter != "-" or caracter == "-" and not primerDigito:
                 return False
         primerDigito = False
     return True
