@@ -582,7 +582,6 @@ def verEstadisticas():
                 dniCompraMax = comprasDni[i]
         print("Cliente con la compra más alta:")
         print(f"- DNI: {dniCompraMax}")
-        #print(f"- Total de la compra: ${cantCompraMax}")
         for i in range(len(comprasId)):
             if comprasDni[i] == dniCompraMax:
                 print(f"- Producto: {comprasProductoId[i]} | Cantidad comprado: {comprasCantidad[i]} | Total Facturado: ${comprasTotal[i]} | Tipo de Pago: {comprasMedioPago[i]}")
@@ -907,8 +906,8 @@ cuponesDescuento = [15, 25, 30, 40]
 
 # ADMINS
 
-NomAdmin=["Bernardo", "Juana", "Erik", "Laura"]
-DniAdmin=["60470761", "11111111", "47435898", "33333333"]
+NomAdmin = ["Juana", "Laura", "Erik", "Bernardo"]
+DniAdmin = ["11111111", "33333333", "47435898", "60470761"]
 
 # =================== PROGRAMA PRINCIPAL ===================
 
