@@ -74,7 +74,7 @@ def verificarID():
     if ID == 2:
         admin = True
 
-    return admin, dni
+    return mostrarMenu(admin, dni)
     
     
 def esNumero(texto):
@@ -853,7 +853,8 @@ def mostrarMenu(admin, ID):
             print("[5] Ver estadísticas por cliente 🙋")
             print("[6] Gestionar Productos 📦")
             print("[7] Gestionar Cupones 🎟️")
-            print("[8] Salir ❌")
+            print("[8] Log Out 😞")
+            print("[9] Salir ❌")
 
             opcion = input("Seleccione opción: ")
 
@@ -873,6 +874,9 @@ def mostrarMenu(admin, ID):
                 gestionarCupones()
             elif opcion == "8":
                 if salir():
+                    return verificarID()
+            elif opcion == "9":
+                if salir():
                     seguirPrograma = False
             else:
                 print("================================================================")
@@ -885,11 +889,15 @@ def mostrarMenu(admin, ID):
             print("=======================================================================")
             print("Bienvenido a la tienda virtual 🏪", ID)
             print("[1] Comprar 💲")
-            print("[2] Salir ❌")
+            print("[2] Log Out 😞")
+            print("[3] Salir ❌")
             opcion = input("Seleccione opción: ")
             if opcion == "1":
                 Comprar(admin, ID)
             elif opcion == "2":
+                if salir():
+                    return verificarID()
+            elif opcion == "3":
                 if salir():
                     seguirPrograma = False
             else:
@@ -928,14 +936,11 @@ cuponesDescuento = [15, 25, 30, 40]
 
 # ADMINS
 
-NomAdmin = ["Juana", "Laura", "Erik", "Bernardo"]
-DniAdmin = ["11111111", "33333333", "47435898", "60470761"]
+NomAdmin = ["Laura", "Erik", "Juana", "Bernardo"]
+DniAdmin = ["46706091", "47435898","47496268", "60470761"]
 
 # =================== PROGRAMA PRINCIPAL ===================
 
 print("Iniciando E-Commerce...")
 
-admin, ID = verificarID()
-
-
-mostrarMenu(admin, ID)
+verificarID()
